@@ -119,6 +119,7 @@ void INI_SaveSettings()
 	for(s32 port = 0; port < 4; port++)
 	{
 		SaveEntry(L"Controller", port, L"Disable", settings[port].isDisabled?1:0, filename);
+		SaveEntry(L"Controller", port, L"Dummy", settings[port].isDummy?1:0, filename);
 		
 		SaveEntry(L"Controller", port, L"AxisInvertedLX", settings[port].axisInverted[GP_AXIS_LX]?1:0, filename);
 		SaveEntry(L"Controller", port, L"AxisInvertedLY", settings[port].axisInverted[GP_AXIS_LY]?1:0, filename);
@@ -129,22 +130,29 @@ void INI_SaveSettings()
 		SaveEntry(L"Controller", port, L"Deadzone", (s32)(settings[port].deadzone * 100), filename);
 		SaveEntry(L"Controller", port, L"AntiDeadzone", (s32)(settings[port].antiDeadzone * 100), filename);
 		SaveEntry(L"Controller", port, L"Rumble", (s32)(settings[port].rumble * 100), filename);
+		SaveEntry(L"Controller", port, L"Port", (s32)(settings[port].port), filename);
 
 		SaveRemap(port, filename);
-	}		
+	}
 }
 
 void INI_LoadSettings()
 {
 	wchar_t filename[] = L".\\Durazno.ini";
 
-	if(ReadEntry(L"General", -1, L"INIversion", filename) != INIversion) return;
+	settings[0].port = 0;
+	settings[1].port = 1;
+	settings[2].port = 2;
+	settings[3].port = 3;
 
+	if(ReadEntry(L"General", -1, L"INIversion", filename) != INIversion) return;
+	
 	for(s32 port = 0; port < 4; port++)
 	{
 		s32 result;
 		
 		settings[port].isDisabled = ReadEntry(L"Controller", port, L"Disable", filename) == 1? true : false;
+		settings[port].isDummy = ReadEntry(L"Controller", port, L"Dummy", filename) == 1? true : false;
 
 		settings[port].axisInverted[GP_AXIS_LX] = ReadEntry(L"Controller", port, L"AxisInvertedLX", filename) == 1? true : false;
 		settings[port].axisInverted[GP_AXIS_LY] = ReadEntry(L"Controller", port, L"AxisInvertedLY", filename) == 1? true : false;
@@ -162,6 +170,9 @@ void INI_LoadSettings()
 
 		result = ReadEntry(L"Controller", port, L"Rumble", filename);
 		if(result != -1) settings[port].rumble = result / 100.0f;
+
+		result = ReadEntry(L"Controller", port, L"Port", filename);
+		if(result != -1) settings[port].port = result % 4;
 
 		ReadRemap(port, filename);
 	}

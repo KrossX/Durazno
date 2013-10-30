@@ -110,6 +110,19 @@ inline WORD Clamp(f64 input)
 	return (WORD)result;
 }
 
+void __fastcall DummyGetState(XINPUT_STATE* pState)
+{
+	pState->Gamepad.wButtons = 0;
+
+	pState->Gamepad.bLeftTrigger = 0;
+	pState->Gamepad.bRightTrigger = 0;
+
+	pState->Gamepad.sThumbLX =0;
+	pState->Gamepad.sThumbLY =0;
+	pState->Gamepad.sThumbRX =0;
+	pState->Gamepad.sThumbRY =0;
+}
+
 void __fastcall TransformGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	TransformAnalog(pState->Gamepad.sThumbLX, pState->Gamepad.sThumbLY, settings[dwUserIndex], true);

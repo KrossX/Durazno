@@ -81,32 +81,58 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	
+	u8 index = (u8)dwUserIndex;
+	dwUserIndex = settings[index].isDummy ? 0 : settings[index].port;
 
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 	XInputGetState_t realXInputGetState = (XInputGetState_t) GetProcAddress(realXInput, "XInputGetState");
 
 	DWORD ret = realXInputGetState(dwUserIndex,pState);
-	if(ret == ERROR_SUCCESS) TransformGetState(dwUserIndex, pState);
+
+	if(ret == ERROR_SUCCESS)
+	{
+		if(settings[index].isDummy)
+			DummyGetState(pState);
+		else
+			TransformGetState(dwUserIndex, pState);
+	}
+
 	return ret;
 }
 
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+
+	u8 index = (u8)dwUserIndex;
+	dwUserIndex = settings[index].isDummy ? 0 : settings[index].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputSetState_t)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 	XInputSetState_t realXInputSetState = (XInputSetState_t) GetProcAddress(realXInput, "XInputSetState");
 	
-	DWORD ret = realXInputSetState(dwUserIndex,pVibration);
-	if(ret == ERROR_SUCCESS) TransformSetState(dwUserIndex, pVibration);
+
+	DWORD ret;
+
+	if(settings[index].isDummy)
+	{
+		ret = ERROR_SUCCESS;
+	}
+	else
+	{
+		TransformSetState(dwUserIndex, pVibration);
+		ret = realXInputSetState(dwUserIndex,pVibration);
+	}
+	
 	return ret;
 }
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputGetCapabilities_t)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);
@@ -125,6 +151,7 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputGetDSoundAudioDeviceGuids_t)(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid);
@@ -135,6 +162,7 @@ extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID*
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputGetBatteryInformation_t)(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation);
@@ -145,6 +173,7 @@ extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE dev
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputGetKeystroke_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);

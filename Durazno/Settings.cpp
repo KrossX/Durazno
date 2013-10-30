@@ -20,7 +20,9 @@
 
 _Settings::_Settings()
 {
+	port = 0;
 	isDisabled = false;
+	isDummy = false;
 	deadzone = 0.0;
 	antiDeadzone = 0.0;
 	rumble = 1.0;

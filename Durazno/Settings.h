@@ -60,7 +60,8 @@ public:
 	_Settings();
 
 public:
-	bool isDisabled;
+	u8 port;
+	bool isDisabled, isDummy;
 	f64 deadzone, antiDeadzone, rumble;
 	bool axisInverted[4];
 	f64 linearity;
