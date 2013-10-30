@@ -61,33 +61,32 @@ inline f64 Linearity(f64 radius, f64 linearity)
 }
 
 void __fastcall TransformAnalog(s16 &X, s16 &Y, _Settings &set, bool leftStick)
-{							
+{
 	// If input is dead, no need to check or do anything else
 	if((X == 0) && (Y == 0)) return;
 
 	f64 const max = 32767.0; // 40201 real max radius
+	f64 const deadzone = set.deadzone * max;
 	f64 radius = sqrt((f64)X*X + (f64)Y*Y);
 
-	set.deadzone *= max;
-
 	// Input must die, on the dead zone.
-	if(radius <= set.deadzone) { X = Y = 0; return; }
+	if(radius <= deadzone) { X = Y = 0; return; }
 
 	f64 rX = X/radius, rY = Y/radius;
 
 	if(set.linearity != 0) radius = Linearity(radius, set.linearity);
-	if(set.deadzone > 0) radius =  (radius - set.deadzone) * max / (max - set.deadzone);
+	if(deadzone > 0) radius =  (radius - deadzone) * max / (max - deadzone);
 
 	//Antideadzone, inspired by x360ce's setting
 	if(set.antiDeadzone > 0)
 	{
 		const f64 antiDeadzone = max * set.antiDeadzone;
-		radius = radius * ((max - antiDeadzone) / max) + antiDeadzone;		
+		radius = radius * ((max - antiDeadzone) / max) + antiDeadzone;
 	}
 
 	f64 dX = rX * radius;
 	f64 dY = rY * radius;
-			
+	
 	if(leftStick)
 	{
 		if(set.axisInverted[GP_AXIS_LX]) dX *= -1;

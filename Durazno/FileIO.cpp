@@ -26,6 +26,7 @@
 extern HINSTANCE g_hinstDLL;
 extern _Settings settings[4];
 extern s32 INIversion;
+extern std::wstring customDLL;
 
 bool SaveEntry(wchar_t * section, s32 sectionNumber, wchar_t * key, s32 value, wchar_t * filename)
 {	
@@ -40,6 +41,18 @@ bool SaveEntry(wchar_t * section, s32 sectionNumber, wchar_t * key, s32 value, w
 	swprintf(valuestring, 512, L"%d", value);
 
 	return WritePrivateProfileString(controller,  key, valuestring, filename) ? true : false;
+}
+
+bool SaveString(wchar_t * section, s32 sectionNumber, wchar_t * key, std::wstring value, wchar_t * filename)
+{	
+	wchar_t controller[512] = {0};
+
+	if(sectionNumber < 0)
+		swprintf(controller, 512, L"%s", section);
+	else
+		swprintf(controller, 512, L"%s%d", section, sectionNumber);
+
+	return WritePrivateProfileString(controller,  key, value.c_str(), filename) ? true : false;
 }
 
 bool SaveRemap(u8 port, wchar_t * filename)
@@ -110,11 +123,28 @@ s32 ReadEntry(wchar_t * section, s32 sectionNumber, wchar_t * key, wchar_t * fil
 	return returnInteger;
 }
 
+std::wstring ReadString(wchar_t * section, s32 sectionNumber, wchar_t * key, wchar_t * filename)
+{	
+	wchar_t controller[512] = {0};
+
+	if(sectionNumber < 0)
+		swprintf(controller, 512, L"%s", section);
+	else
+		swprintf(controller, 512, L"%s%d", section, sectionNumber);
+	
+	wchar_t returnvalue[512] = {0};
+	s32 nSize = GetPrivateProfileString(controller, key, L"", returnvalue, 512, filename);
+
+	std::wstring returnString(returnvalue);
+	return returnString;
+}
+
 void INI_SaveSettings()
 {
 	wchar_t filename[] = L".\\Durazno.ini";
 
 	SaveEntry(L"General", -1, L"INIversion", INIversion, filename);
+	SaveString(L"General", -1, L"LoadDLL", customDLL, filename);
 
 	for(s32 port = 0; port < 4; port++)
 	{
@@ -146,6 +176,7 @@ void INI_LoadSettings()
 	settings[3].port = 3;
 
 	if(ReadEntry(L"General", -1, L"INIversion", filename) != INIversion) return;
+	customDLL = ReadString(L"General", -1, L"LoadDLL", filename);
 	
 	for(s32 port = 0; port < 4; port++)
 	{

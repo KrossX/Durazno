@@ -20,12 +20,21 @@ HINSTANCE realXInput = NULL;
 
 _Settings settings[4];
 s32 INIversion = 2; // INI version stuff
+std::wstring customDLL; // Custom DLL to load first
+
+bool LoadCustomDLL()
+{
+	realXInput = LoadLibrary(customDLL.c_str());
+	return realXInput != NULL;
+}
 
 void LoadSystemXInputDLL()
 {
-	WCHAR sysdir[MAX_PATH] = {0};
-	WCHAR buffer[MAX_PATH] = {0};
-	WCHAR module[MAX_PATH] = {0};
+	if(LoadCustomDLL()) return;
+
+	WCHAR sysdir[MAX_PATH];
+	WCHAR buffer[MAX_PATH];
+	WCHAR module[MAX_PATH];
 
 	GetSystemDirectory(sysdir, MAX_PATH);
 	GetModuleFileName(g_hinstDLL, module, MAX_PATH);
@@ -53,11 +62,11 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 			InitializeCriticalSection(&cs);
 			EnterCriticalSection(&cs);
 
-			g_hinstDLL =  hinstDLL;
-			LoadSystemXInputDLL();
-
 			INI_LoadSettings();
 			INI_SaveSettings();
+			
+			g_hinstDLL =  hinstDLL;
+			LoadSystemXInputDLL();
 
 			LeaveCriticalSection(&cs);
 		}
@@ -181,3 +190,48 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 	return realXInputGetKeystroke(dwUserIndex,dwReserved,pKeystroke);
 }
 
+// UNDOCUMENTED
+
+extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+{
+	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	
+	if(!realXInput) LoadSystemXInputDLL();
+	typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	XInputGetStateEx_t realXInputGetStateEx = (XInputGetStateEx_t) GetProcAddress(realXInput, (LPCSTR) 100);
+	return realXInputGetStateEx(dwUserIndex,dwReserved,pKeystroke);
+}
+
+extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+{
+	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	
+	if(!realXInput) LoadSystemXInputDLL();
+	typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	XInputWaitForGuideButton_t realXInputWaitForGuideButton = (XInputWaitForGuideButton_t) GetProcAddress(realXInput, (LPCSTR) 101);
+	return realXInputWaitForGuideButton(dwUserIndex,dwReserved,pKeystroke);
+}
+
+extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+{
+	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	
+	if(!realXInput) LoadSystemXInputDLL();
+	typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	XInputCancelGuideButtonWait_t realXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t) GetProcAddress(realXInput, (LPCSTR) 102);
+	return realXInputCancelGuideButtonWait(dwUserIndex,dwReserved,pKeystroke);
+}
+
+extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+{
+	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	
+	if(!realXInput) LoadSystemXInputDLL();
+	typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	XInputPowerOffController_t realXInputPowerOffController = (XInputPowerOffController_t) GetProcAddress(realXInput, (LPCSTR) 103);
+	return realXInputPowerOffController(dwUserIndex,dwReserved,pKeystroke);
+}
