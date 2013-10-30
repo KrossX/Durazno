@@ -191,8 +191,15 @@ namespace DuraznoGUI
 				if(curPad > 3) curPad = 0;
 				
 				RotateTransform Wheee = new RotateTransform();
-				Wheee.Angle = curPad * 90;
 
+				switch (curPad)
+				{
+				case 0: Wheee.Angle = 0; break;
+				case 1: Wheee.Angle = 90; break;
+				case 2: Wheee.Angle = 270; break;
+				case 3: Wheee.Angle = 180; break;
+				}
+				
 				PadSelection.RenderTransform = Wheee;
 
 				UpdateControls();
