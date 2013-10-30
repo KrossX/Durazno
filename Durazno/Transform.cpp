@@ -60,6 +60,24 @@ inline f64 Linearity(f64 radius, f64 linearity)
 	return pow(radius / 32768.0, exp) * 32768.0;
 }
 
+void __fastcall TriggerDeadzone(XINPUT_STATE* pState, _Settings &set)
+{
+	if(!set.triggerDeadzone) return;
+
+	float dz = set.triggerDeadzone;
+
+	u8 &LT = pState->Gamepad.bLeftTrigger;
+	u8 &RT = pState->Gamepad.bRightTrigger;
+	
+	float tg = (float)LT;
+	tg = tg < dz ? 0 : (tg - dz) * 255.0f / (255.0f - dz);
+	LT = ((s32)tg) & 0xFF;
+
+	tg = (float)RT;
+	tg = tg < dz ? 0 : (tg - dz) * 255.0f / (255.0f - dz);
+	RT = ((s32)tg) & 0xFF;
+}
+
 void __fastcall TransformAnalog(s16 &X, s16 &Y, _Settings &set, bool leftStick)
 {
 	// If input is dead, no need to check or do anything else
@@ -126,6 +144,8 @@ void __fastcall TransformGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	TransformAnalog(pState->Gamepad.sThumbLX, pState->Gamepad.sThumbLY, settings[dwUserIndex], true);
 	TransformAnalog(pState->Gamepad.sThumbRX, pState->Gamepad.sThumbRY, settings[dwUserIndex], false);
+
+	TriggerDeadzone(pState, settings[dwUserIndex]);
 
 	TransformRemap(dwUserIndex, pState);
 }
