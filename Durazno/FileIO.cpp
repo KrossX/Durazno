@@ -69,8 +69,9 @@ void INI_SaveSettings()
 		SaveEntry(L"Controller", port, L"AxisInvertedRX", settings[port].axisInverted[GP_AXIS_RX]?1:0, filename);
 		SaveEntry(L"Controller", port, L"AxisInvertedRY", settings[port].axisInverted[GP_AXIS_RY]?1:0, filename);
 
-		SaveEntry(L"Controller", port, L"Linearity", settings[port].linearity +3, filename);
+		SaveEntry(L"Controller", port, L"Linearity", (int)(settings[port].linearity*10) +30, filename);
 		SaveEntry(L"Controller", port, L"Deadzone", (int)(settings[port].deadzone * 100), filename);
+		SaveEntry(L"Controller", port, L"AntiDeadzone", (int)(settings[port].antiDeadzone * 100), filename);
 		SaveEntry(L"Controller", port, L"Rumble", (int)(settings[port].rumble * 100), filename);
 	}		
 }
@@ -91,10 +92,13 @@ void INI_LoadSettings()
 		settings[port].axisInverted[GP_AXIS_RY] = ReadEntry(L"Controller", port, L"AxisInvertedRY", filename) == 1? true : false;
 
 		result = ReadEntry(L"Controller", port, L"Linearity",  filename);
-		if(result != -1) settings[port].linearity = (result & 0xF) -3;
+		if(result != -1) settings[port].linearity = result/10.0 - 3.0;
 
 		result = ReadEntry(L"Controller", port, L"Deadzone",  filename);
 		if(result != -1) settings[port].deadzone = result / 100.0f;
+
+		result = ReadEntry(L"Controller", port, L"AntiDeadzone",  filename);
+		if(result != -1) settings[port].antiDeadzone = result / 100.0f;
 
 		result = ReadEntry(L"Controller", port, L"Rumble", filename);
 		if(result != -1) settings[port].rumble = result / 100.0f;

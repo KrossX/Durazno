@@ -23,7 +23,7 @@
 
 extern _Settings settings[4];
 
-inline double Linearity(double radius, short linearity)
+inline double Linearity(double radius, double linearity)
 {
 	const double exp = linearity > 0 ? linearity +1 : 1.0/(-linearity+1);
 	return pow(radius / 32768.0, exp) * 32768.0;
@@ -34,7 +34,7 @@ void TransformAnalog(SHORT &X, SHORT &Y, _Settings &set, bool leftStick)
 	// If input is dead, no need to check or do anything else
 	if((X == 0) && (Y == 0)) return;
 
-	double const max = 32768.0; // 40201 real max radius
+	double const max = 32767.0; // 40201 real max radius
 	double radius = sqrt((double)X*X + (double)Y*Y);
 
 	set.deadzone *= max;
@@ -46,6 +46,13 @@ void TransformAnalog(SHORT &X, SHORT &Y, _Settings &set, bool leftStick)
 
 	if(set.linearity != 0) radius = Linearity(radius, set.linearity);
 	if(set.deadzone > 0) radius =  (radius - set.deadzone) * max / (max - set.deadzone);
+
+	//Antideadzone, inspired by x360ce's setting
+	if(set.antiDeadzone > 0)
+	{
+		const double antiDeadzone = max * set.antiDeadzone;
+		radius = radius * ((max - antiDeadzone) / max) + antiDeadzone;		
+	}
 
 	double dX = rX * radius;
 	double dY = rY * radius;

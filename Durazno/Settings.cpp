@@ -21,6 +21,7 @@ _Settings::_Settings()
 {
 	isDisabled = false;
 	deadzone = 0.0;
+	antiDeadzone = 0.0;
 	rumble = 1.0;
 	linearity = 0;
 	

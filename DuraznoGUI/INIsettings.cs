@@ -70,14 +70,14 @@ namespace DuraznoGUI
 				mainWindow.invertedAxis[port, 3] = ReadEntry("Controller" + port, "AxisInvertedRY") == 1 ? true : false;
 
 				mainWindow.linearity[port] = ReadEntry("Controller" + port, "Linearity");
-
-				if (mainWindow.linearity[port] == -1) mainWindow.linearity[port] = 0;
-				else mainWindow.linearity[port] -= 3;
+				mainWindow.linearity[port] = mainWindow.linearity[port] < 0 ? 0 : mainWindow.linearity[port] / 10.0 - 3.0;
 
 				mainWindow.deadzone[port] = ReadEntry("Controller" + port, "Deadzone");
+				mainWindow.antiDeadzone[port] = ReadEntry("Controller" + port, "AntiDeadzone");
 				mainWindow.rumble[port] = ReadEntry("Controller" + port, "Rumble");
 
 				if (mainWindow.deadzone[port] < 0) mainWindow.deadzone[port] = 0.0;
+				if (mainWindow.antiDeadzone[port] < 0) mainWindow.antiDeadzone[port] = 0.0;
 				if (mainWindow.rumble[port] < 0) mainWindow.rumble[port] = 100.0;
 			}
 		}
@@ -93,8 +93,9 @@ namespace DuraznoGUI
 				SaveEntry("Controller" + port, "AxisInvertedRX", mainWindow.invertedAxis[port, 2] ? 1 : 0);
 				SaveEntry("Controller" + port, "AxisInvertedRY", mainWindow.invertedAxis[port, 3] ? 1 : 0);
 
-				SaveEntry("Controller" + port, "Linearity", mainWindow.linearity[port] + 3);
+				SaveEntry("Controller" + port, "Linearity", (int)(mainWindow.linearity[port]*10 + 30));
 				SaveEntry("Controller" + port, "Deadzone", (int)mainWindow.deadzone[port]);
+				SaveEntry("Controller" + port, "AntiDeadzone", (int)mainWindow.antiDeadzone[port]);
 				SaveEntry("Controller" + port, "Rumble", (int)mainWindow.rumble[port]);
 			}
 		}

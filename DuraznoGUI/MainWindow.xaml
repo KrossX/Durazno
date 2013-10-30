@@ -50,20 +50,23 @@
     	<local:XboxButton x:Name="PadSelection" HorizontalAlignment="Left" Height="78.13" Margin="15,15,0,0" VerticalAlignment="Top" Width="78.13" MouseLeftButtonUp="PadSelection_MouseLeftButtonUp" RenderTransformOrigin="0.5,0.5"/>
     	<Label x:Name="Close_Label" Content="X" HorizontalAlignment="Right" Margin="0,8,8,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24" Foreground="#FFB6B6B6" MouseLeftButtonDown="Close_Label_MouseLeftButtonDown"/>
     	<CheckBox x:Name="ControllerEnabled" Content="Controller Enabled" Margin="20,124,0,0" VerticalAlignment="Top" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="ControllerEnabled_Checked" Unchecked="ControllerEnabled_Unchecked"/>
-    	<Grid x:Name="Settings" Margin="20,175,20,54">
-    		<CheckBox x:Name="InvertLX" Content="Invert Left Stick X" Margin="4,0,0,172" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Bottom" Checked="InvertLX_Checked" Unchecked="InvertLX_Unchecked"/>
-    		<CheckBox x:Name="InvertLY" Content="Invert Left Stick Y" Margin="4,0,0,144" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="InvertLY_Checked" Unchecked="InvertLY_Unchecked"/>
-    		<CheckBox x:Name="InvertRX" Content="Invert Right Stick X" Margin="0,0,0,172" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Checked="InvertRX_Checked" Unchecked="InvertRX_Unchecked"/>
-    		<CheckBox x:Name="InvertRY" Content="Invert Right Stick Y" Margin="0,0,0,144" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" Checked="InvertRY_Checked" Unchecked="InvertRY_Unchecked"/>
-    		<Slider x:Name="Rumble_Slider" Margin="71.9,78,58,96" Maximum="200" SmallChange="1" LargeChange="10" TickFrequency="50" Value="100" d:LayoutOverrides="Height" ValueChanged="Rumble_Slider_ValueChanged"/>
-    		<Label x:Name="Rumble_Label" Content="Rumble" HorizontalAlignment="Left" Margin="0,72,0,90" Foreground="#FFB6B6B6" FontSize="16" d:LayoutOverrides="Height"/>
-    		<Label x:Name="Rumble_Value" Content="100%" HorizontalAlignment="Right" Margin="0,72,0,90" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" d:LayoutOverrides="Height"/>
-    		<Slider x:Name="Deadzone_Slider" Margin="92.9,0,58,53" Maximum="100" SmallChange="1" VerticalAlignment="Bottom" LargeChange="10" TickFrequency="25" ValueChanged="Deadzone_Slider_ValueChanged"/>
-    		<Label x:Name="Deadzone_Label" Content="Deadzone" HorizontalAlignment="Left" Margin="0,0,0,47" Foreground="#FFB6B6B6" VerticalAlignment="Bottom" FontSize="16"/>
-    		<Label x:Name="Deadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,0,0,47" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6"/>
-    		<Slider x:Name="Linearity_Slider" Margin="80.3,0,58,2" TickPlacement="Both" Maximum="3" Minimum="-3" SmallChange="1" VerticalAlignment="Bottom" ValueChanged="Linearity_Slider_ValueChanged"/>
+    	<Grid x:Name="Settings" Margin="20,162,20,54">
+    		<CheckBox x:Name="InvertLX" Content="Invert Left Stick X" Margin="4,0,0,181" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Bottom" Checked="InvertLX_Checked" Unchecked="InvertLX_Unchecked"/>
+    		<CheckBox x:Name="InvertLY" Content="Invert Left Stick Y" Margin="4,0,0,153" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="InvertLY_Checked" Unchecked="InvertLY_Unchecked"/>
+    		<CheckBox x:Name="InvertRX" Content="Invert Right Stick X" Margin="0,0,0,181" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Checked="InvertRX_Checked" Unchecked="InvertRX_Unchecked"/>
+    		<CheckBox x:Name="InvertRY" Content="Invert Right Stick Y" Margin="0,0,0,153" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" Checked="InvertRY_Checked" Unchecked="InvertRY_Unchecked"/>
+    		<Slider x:Name="Rumble_Slider" Margin="71.9,69,58,0" Maximum="200" SmallChange="1" LargeChange="10" TickFrequency="50" Value="100" ValueChanged="Rumble_Slider_ValueChanged" VerticalAlignment="Top"/>
+    		<Label x:Name="Rumble_Label" Content="Rumble" HorizontalAlignment="Left" Margin="0,63,0,99" Foreground="#FFB6B6B6" FontSize="16" d:LayoutOverrides="Height"/>
+    		<Label x:Name="Rumble_Value" Content="100%" HorizontalAlignment="Right" Margin="0,63,0,99" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" d:LayoutOverrides="Height"/>
+    		<Slider x:Name="Deadzone_Slider" Margin="92.9,0,58,82" Maximum="100" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="Deadzone_Slider_ValueChanged" VerticalAlignment="Bottom"/>
+    		<Label x:Name="Deadzone_Label" Content="Deadzone" HorizontalAlignment="Left" Margin="0,99,0,76" Foreground="#FFB6B6B6" FontSize="16" d:LayoutOverrides="Height"/>
+    		<Label x:Name="Deadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,99,0,76" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" d:LayoutOverrides="Height"/>
+    		<Slider x:Name="AntiDeadzone_Slider" Margin="121.723,0,58,44" Maximum="90" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="AntiDeadzone_Slider_ValueChanged" VerticalAlignment="Bottom"/>
+    		<Label x:Name="AntiDeadzone_Label" Content="AntiDeadzone" HorizontalAlignment="Left" Margin="0,0,0,38" Foreground="#FFB6B6B6" FontSize="16" VerticalAlignment="Bottom"/>
+    		<Label x:Name="AntiDeadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,0,0,38" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" VerticalAlignment="Bottom"/>
+    		<Slider x:Name="Linearity_Slider" Margin="80.3,0,58,2" TickPlacement="Both" Maximum="3" Minimum="-3" SmallChange="0.5" VerticalAlignment="Bottom" ValueChanged="Linearity_Slider_ValueChanged"/>
     		<Label x:Name="Linearity_Label" Content="Linearity" HorizontalAlignment="Left" Foreground="#FFB6B6B6" VerticalAlignment="Bottom" FontSize="16"/>
-    		<Label x:Name="Linearity_Value" Content="-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" Margin="0,0,20,0"/>
+    		<Label x:Name="Linearity_Value" Content="-0.00" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" Margin="0,0,5,0"/>
     	</Grid>
     	<Label Content="KrossX's Magical Tools (krossx@live.com)" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="10.667" Opacity="0.25"/>
     	<Label x:Name="Version_Label" Content="v0.5" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="#FFB6B6B6" FontSize="10.667"/>

@@ -43,8 +43,9 @@ namespace DuraznoGUI
 		public bool[,] invertedAxis = new bool[4,4];
 		public bool[] isEnabled = new bool[4];
 		public double[] deadzone = new double[4];
+		public double[] antiDeadzone = new double[4];
 		public double[] rumble = new double[4];
-		public int[] linearity = new int[4];
+		public double[] linearity = new double[4];
 			
 		int curPad = 0;
 		
@@ -63,7 +64,7 @@ namespace DuraznoGUI
 		{
 			InitializeComponent();
 
-			if (Version_Label != null) Version_Label.Content = "0.5 r" + SvnRevision.SVN_REV;
+			if (Version_Label != null) Version_Label.Content = "v0.5 r" + SvnRevision.SVN_REV;
 
 			INIstuff = new INIsettings(this);
 
@@ -83,6 +84,7 @@ namespace DuraznoGUI
 
 			isEnabled[curPad] = true;
 			deadzone[curPad] = 0;
+			antiDeadzone[curPad] = 0;
 			rumble[curPad] = 100;
 			linearity[curPad] = 0;
 		}
@@ -110,15 +112,16 @@ namespace DuraznoGUI
 			if (Deadzone_Slider != null) Deadzone_Slider.Value = deadzone[curPad];
 			if (Deadzone_Value != null) Deadzone_Value.Content = ((int)Deadzone_Slider.Value).ToString() + "%";
 
+			if (AntiDeadzone_Slider != null) AntiDeadzone_Slider.Value = antiDeadzone[curPad];
+			if (AntiDeadzone_Value != null) AntiDeadzone_Value.Content = ((int)AntiDeadzone_Slider.Value).ToString() + "%";
+
 			if (Linearity_Slider != null) Linearity_Slider.Value = linearity[curPad];
 
 			if (Linearity_Value != null)
 			{
 				double dLinearity = Linearity_Slider.Value;
-				int tmpLinearity = (int)(dLinearity + 0.5 * (dLinearity < 0 ? -1 : 1));
-				tmpLinearity = tmpLinearity > 0 ? tmpLinearity + 1 : tmpLinearity < 0 ? tmpLinearity - 1 : tmpLinearity;
-
-				Linearity_Value.Content = tmpLinearity.ToString();
+				dLinearity = dLinearity > 0 ? dLinearity + 1 : dLinearity < 0 ? dLinearity - 1 : dLinearity;
+				Linearity_Value.Content = dLinearity.ToString("F2");
 			}
 		}
 
@@ -170,19 +173,25 @@ namespace DuraznoGUI
 
 			deadzone[curPad] = Deadzone_Slider.Value;
 		}
+		
+		private void AntiDeadzone_Slider_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
+		{
+			if (AntiDeadzone_Value != null)
+				AntiDeadzone_Value.Content = ((int)AntiDeadzone_Slider.Value).ToString() + "%";
+
+			antiDeadzone[curPad] = AntiDeadzone_Slider.Value;
+		}
 
 		private void Linearity_Slider_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<double> e)
 		{
-			double dLinearity = Linearity_Slider.Value;
-			
-			int _linearity = (int)(dLinearity + 0.5 * (dLinearity < 0? -1 : 1));
+			double dLinearity = (int)(Linearity_Slider.Value * 10.0)/10.0;
 
-			linearity[curPad] = _linearity;
+			linearity[curPad] = dLinearity;
 
-			_linearity = _linearity > 0 ? _linearity + 1 : _linearity < 0 ? _linearity - 1 : _linearity;
+			dLinearity = dLinearity > 0 ? dLinearity + 1 : dLinearity < 0 ? dLinearity - 1 : dLinearity;
 			
 			if (Linearity_Value != null)
-				Linearity_Value.Content = _linearity.ToString();
+				Linearity_Value.Content = dLinearity.ToString("F2");
 		}
 
 		private void PadSelection_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)

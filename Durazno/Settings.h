@@ -32,9 +32,9 @@ public:
 
 public:
 	bool isDisabled;
-	double deadzone, rumble;	
+	double deadzone, antiDeadzone, rumble;
 	bool axisInverted[4];
-	short linearity;
+	double linearity;
 
 private:
 	_Settings(const _Settings &);
