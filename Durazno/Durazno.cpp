@@ -192,46 +192,46 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
 // UNDOCUMENTED
 
-extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
-	typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	typedef DWORD (WINAPI* XInputGetStateEx_t)(DWORD dwUserIndex, XINPUT_STATE *pState);
 	XInputGetStateEx_t realXInputGetStateEx = (XInputGetStateEx_t) GetProcAddress(realXInput, (LPCSTR) 100);
-	return realXInputGetStateEx(dwUserIndex,dwReserved,pKeystroke);
+	return realXInputGetStateEx(dwUserIndex,pState);
 }
 
-extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
-	typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	typedef DWORD (WINAPI* XInputWaitForGuideButton_t)(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid);
 	XInputWaitForGuideButton_t realXInputWaitForGuideButton = (XInputWaitForGuideButton_t) GetProcAddress(realXInput, (LPCSTR) 101);
-	return realXInputWaitForGuideButton(dwUserIndex,dwReserved,pKeystroke);
+	return realXInputWaitForGuideButton(dwUserIndex,dwFlag,pVoid);
 }
 
-extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
-	typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	typedef DWORD (WINAPI* XInputCancelGuideButtonWait_t)(DWORD dwUserIndex);
 	XInputCancelGuideButtonWait_t realXInputCancelGuideButtonWait = (XInputCancelGuideButtonWait_t) GetProcAddress(realXInput, (LPCSTR) 102);
-	return realXInputCancelGuideButtonWait(dwUserIndex,dwReserved,pKeystroke);
+	return realXInputCancelGuideButtonWait(dwUserIndex);
 }
 
-extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
+extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
 	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
 	
 	if(!realXInput) LoadSystemXInputDLL();
-	typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke);
+	typedef DWORD (WINAPI* XInputPowerOffController_t)(DWORD dwUserIndex);
 	XInputPowerOffController_t realXInputPowerOffController = (XInputPowerOffController_t) GetProcAddress(realXInput, (LPCSTR) 103);
-	return realXInputPowerOffController(dwUserIndex,dwReserved,pKeystroke);
+	return realXInputPowerOffController(dwUserIndex);
 }
