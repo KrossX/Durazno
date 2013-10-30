@@ -319,21 +319,12 @@ void __fastcall TransformRemap(DWORD dwUserIndex, XINPUT_STATE* pState)
 	pState->Gamepad.sThumbRY = gamepad.analogRY;
 }
 
-
-
 extern s32 __stdcall GetControllerInput(s32 port)
 {
-	extern HINSTANCE realXInput;
-	void LoadSystemXInputDLL();
-	
-	if(!realXInput) LoadSystemXInputDLL();
-	typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
-	XInputGetState_t realXInputGetState = (XInputGetState_t) GetProcAddress(realXInput, "XInputGetState");
-
 	for(int i = 0; i < 100; i++)
 	{	
 		XINPUT_STATE state;
-		DWORD result = realXInputGetState(port, &state);
+		DWORD result = DuraznoGetState(port, &state);
 	
 		if(result != ERROR_SUCCESS) return -1;
 	

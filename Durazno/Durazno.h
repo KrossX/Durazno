@@ -22,3 +22,5 @@
 #include <stdio.h>
 
 #include "..\..\Common\TypeDefs.h"
+
+DWORD DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState);
