@@ -64,7 +64,6 @@
     <Compile Include="Remap_Sel_Button.xaml.cs">
       <DependentUpon>Remap_Sel_Button.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SvnRevision.cs" />
     <Compile Include="XboxButton.xaml.cs">
       <DependentUpon>XboxButton.xaml</DependentUpon>
     </Compile>
@@ -128,8 +127,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Expression\Blend\.NETFramework\v4.0\Microsoft.Expression.Blend.WPF.targets" />
   <PropertyGroup>
-    <PreBuildEvent>cd ..\DuraznoGUI
-"$(SolutionDir)..\Common\svnrev" *.* -cDuraznoGUI.SvnRevision -pProperties\AssemblyInfo.cs</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

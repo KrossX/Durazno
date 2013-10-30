@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "..\..\Common\TypeDefs.h"
+#include "TypeDefs.h"
 #include "Settings.h"
 
 _Settings::_Settings()

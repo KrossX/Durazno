@@ -18,7 +18,7 @@
 #include <Windows.h>
 #include <stdio.h>
 
-#include "..\..\Common\TypeDefs.h"
+#include "TypeDefs.h"
 #include "Settings.h"
 
 #include <string>

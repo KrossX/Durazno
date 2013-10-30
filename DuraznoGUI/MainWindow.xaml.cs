@@ -69,7 +69,7 @@ namespace DuraznoGUI
 		{
 			InitializeComponent();
 
-			if (Version_Label != null) Version_Label.Content = "v0.5 r" + SvnRevision.SVN_REV;
+			if (Version_Label != null) Version_Label.Content = "v0.6";
 
 			INIstuff = new INIsettings(this, 2); // Set INI version here
 

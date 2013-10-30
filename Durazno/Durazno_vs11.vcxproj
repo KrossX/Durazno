@@ -65,7 +65,8 @@
       <ModuleDefinitionFile>Durazno.def</ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\Common\svnrev" *.*</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Readme.txt" "$(TargetDir)" /Y</Command>
@@ -89,7 +90,8 @@
       <ModuleDefinitionFile>Durazno.def</ModuleDefinitionFile>
     </Link>
     <PreBuildEvent>
-      <Command>"$(SolutionDir)..\Common\svnrev" *.*</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Readme.txt" "$(TargetDir)" /Y</Command>
