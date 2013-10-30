@@ -69,8 +69,8 @@ static BOOL LoadSystemXInputDLL()
 	XInput[CancelGuideButtonWait]	= GetProcAddress(realXInput, (LPCSTR) 102);
 	XInput[PowerOffController]		= GetProcAddress(realXInput, (LPCSTR) 103);
 
-	for(int i = 0; i < XInputTotal; i++)
-		if(!XInput[i]) return FALSE;
+	//for(int i = 0; i < XInputTotal; i++)
+	//	if(!XInput[i]) return FALSE;
 
 	return TRUE;
 }
