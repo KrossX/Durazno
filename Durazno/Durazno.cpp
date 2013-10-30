@@ -22,32 +22,32 @@ _Settings settings[4];
 
 void LoadSystemXInputDLL()
 {
-    WCHAR sysdir[MAX_PATH] = {0};
-    WCHAR buffer[MAX_PATH] = {0};
+	WCHAR sysdir[MAX_PATH] = {0};
+	WCHAR buffer[MAX_PATH] = {0};
 	WCHAR module[MAX_PATH] = {0};
 
-    GetSystemDirectory(sysdir, MAX_PATH);
+	GetSystemDirectory(sysdir, MAX_PATH);
 	GetModuleFileName(g_hinstDLL, module, MAX_PATH);
 
 	if(GetLastError() == ERROR_SUCCESS)
 	{
 		std::wstring filename(module);
-		filename = filename.substr(filename.find_last_of(L"\\/")+1);		
+		filename = filename.substr(filename.find_last_of(L"\\/")+1);
 		swprintf_s(buffer,L"%s\\%s",sysdir,filename);
 	}
 	else
 		swprintf_s(buffer,L"%s\\%s",sysdir,L"xinput1_3.dll");
 
-    if (!realXInput) realXInput = LoadLibrary(buffer);
+	if (!realXInput) realXInput = LoadLibrary(buffer);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
 {
-    UNREFERENCED_PARAMETER(lpReserved);
+	UNREFERENCED_PARAMETER(lpReserved);
 
-    switch( fdwReason )
-    {
-    case DLL_PROCESS_ATTACH:
+	switch( fdwReason )
+	{
+	case DLL_PROCESS_ATTACH:
 		{
 			InitializeCriticalSection(&cs);
 			EnterCriticalSection(&cs);
@@ -60,21 +60,21 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 
 			LeaveCriticalSection(&cs);
 		}
-        break;
+		break;
 
-    case DLL_PROCESS_DETACH:
+	case DLL_PROCESS_DETACH:
 		{
 			EnterCriticalSection(&cs);
-			
+
 			if(realXInput) FreeLibrary(realXInput);
 
 			LeaveCriticalSection(&cs);
 			DeleteCriticalSection(&cs);
 		}
-        break;
-    }
+		break;
+	}
 
-    return TRUE;
+	return TRUE;
 }
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
@@ -84,7 +84,7 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	if(!realXInput) LoadSystemXInputDLL();
 	typedef DWORD (WINAPI* XInputGetState_t)(DWORD dwUserIndex, XINPUT_STATE* pState);
 	XInputGetState_t realXInputGetState = (XInputGetState_t) GetProcAddress(realXInput, "XInputGetState");
-	
+
 	DWORD ret = realXInputGetState(dwUserIndex,pState);
 	if(ret == ERROR_SUCCESS) TransformGetState(dwUserIndex, pState);
 	return ret;
