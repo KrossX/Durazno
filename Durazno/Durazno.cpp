@@ -12,6 +12,7 @@
 #include "Transform.h"
 #include "FileIO.h"
 #include "Settings.h"
+#include <string>
 
 CRITICAL_SECTION cs;
 HINSTANCE g_hinstDLL = NULL;
@@ -21,11 +22,21 @@ _Settings settings[4];
 
 void LoadSystemXInputDLL()
 {
-    WCHAR sysdir[MAX_PATH];
-    WCHAR buffer[MAX_PATH];
+    WCHAR sysdir[MAX_PATH] = {0};
+    WCHAR buffer[MAX_PATH] = {0};
+	WCHAR module[MAX_PATH] = {0};
 
-    GetSystemDirectory(sysdir,MAX_PATH);
-    swprintf_s(buffer,L"%s\\%s",sysdir,L"xinput1_3.dll");
+    GetSystemDirectory(sysdir, MAX_PATH);
+	GetModuleFileName(g_hinstDLL, module, MAX_PATH);
+
+	if(GetLastError() == ERROR_SUCCESS)
+	{
+		std::wstring filename(module);
+		filename = filename.substr(filename.find_last_of(L"\\/")+1);		
+		swprintf_s(buffer,L"%s\\%s",sysdir,filename);
+	}
+	else
+		swprintf_s(buffer,L"%s\\%s",sysdir,L"xinput1_3.dll");
 
     if (!realXInput) realXInput = LoadLibrary(buffer);
 }

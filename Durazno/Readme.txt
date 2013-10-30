@@ -13,8 +13,15 @@ using XInput controllers.
 Usage
 -------------------------------------------------------------------------------
 
-Run the GUI to create an INI with the settings, then drop the INI and the 
-DLL in the game's directory where the main executable is.
+Run the GUI to create an INI with the desired settings, then drop the INI and 
+the DLL in the game's directory where the main executable is.
+
+If there's no INI in the current directory, the GUI or the DLL itself will
+create one on first run. To change the INI with the GUI, just load the GUI 
+from that same location. Or just edit it manually.
+
+You might need to rename the DLL depending on the game. The following list
+might help: http://code.google.com/p/x360ce/wiki/GameCompatibilityList 
 
 -------------------------------------------------------------------------------
 Thanks / Contact
