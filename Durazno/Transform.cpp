@@ -34,20 +34,18 @@ void TransformAnalog(SHORT &X, SHORT &Y, _Settings &set, bool leftStick)
 	// If input is dead, no need to check or do anything else
 	if((X == 0) && (Y == 0)) return;
 
+	double const max = 32768.0; // 40201 real max radius
 	double radius = sqrt((double)X*X + (double)Y*Y);
+
+	set.deadzone *= max;
+
+	// Input must die, on the dead zone.
+	if(radius <= set.deadzone) { X = Y = 0; return; }
+
 	double rX = X/radius, rY = Y/radius;
-	
-	if(set.deadzone > 0)
-	{	
-		double const max = 32768.0; // 40201 real max radius
-		
-		set.deadzone = max * set.deadzone; 	
 
-		radius = radius <= set.deadzone ? 0 : (radius - set.deadzone) * max / (max - set.deadzone);
-
-		if(set.linearity != 0) Linearity(radius, set.linearity);		
-	}
-	else if(set.linearity != 0) Linearity(radius, set.linearity);
+	if(set.linearity != 0) radius = Linearity(radius, set.linearity);
+	if(set.deadzone > 0) radius =  (radius - set.deadzone) * max / (max - set.deadzone);
 
 	double dX = rX * radius;
 	double dY = rY * radius;
