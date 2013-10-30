@@ -15,6 +15,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "..\..\Common\TypeDefs.h"
 #include "Settings.h"
 
 _Settings::_Settings()
@@ -25,8 +26,17 @@ _Settings::_Settings()
 	rumble = 1.0;
 	linearity = 0;
 	
-	for(short i = 0; i < 4; i++)
+	for(s16 i = 0; i < 4; i++)
 	{
 		axisInverted[i] = false;
+	}
+
+	for (int i = 0; i < 24; i++)
+	{
+		remap[i].control = i;
+
+		if(i < 14) remap[i].type = RT_DIGITAL_DIGITAL;
+		else if(i < 16) remap[i].type = RT_TRIGGER_TRIGGER;
+		else remap[i].type = RT_ANALOG_ANALOG;
 	}
 }

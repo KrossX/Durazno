@@ -25,6 +25,35 @@ enum GAMEPAD_AXES
 	GP_AXIS_RY
 };
 
+enum REMAP_TYPE
+{
+	RT_DIGITAL_DIGITAL,
+	RT_DIGITAL_TRIGGER,
+	RT_DIGITAL_ANALOG,
+
+	RT_TRIGGER_DIGITAL,
+	RT_TRIGGER_TRIGGER,
+	RT_TRIGGER_ANALOG,
+
+	RT_ANALOG_DIGITAL,
+	RT_ANALOG_TRIGGER,
+	RT_ANALOG_ANALOG
+};
+
+struct _Gamepad
+{
+	u16 buttons;
+	u8 triggerL, triggerR;
+	s32 analogLX, analogLY;
+	s32 analogRX, analogRY;
+};
+
+struct _Remap
+{
+	u8 type;
+	u8 control;	
+};
+
 class _Settings
 {
 public:
@@ -32,10 +61,12 @@ public:
 
 public:
 	bool isDisabled;
-	double deadzone, antiDeadzone, rumble;
+	f64 deadzone, antiDeadzone, rumble;
 	bool axisInverted[4];
-	double linearity;
-
+	f64 linearity;
+	
+	_Remap remap[24];
+	
 private:
 	_Settings(const _Settings &);
 	_Settings& operator=(const _Settings &);

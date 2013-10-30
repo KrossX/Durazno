@@ -19,7 +19,7 @@ HINSTANCE g_hinstDLL = NULL;
 HINSTANCE realXInput = NULL;
 
 _Settings settings[4];
-int INIversion = 1; // INI version stuff
+s32 INIversion = 2; // INI version stuff
 
 void LoadSystemXInputDLL()
 {

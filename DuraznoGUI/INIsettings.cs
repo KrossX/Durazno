@@ -40,10 +40,33 @@ namespace DuraznoGUI
 			INIversion = version;
 		}
 
+		bool SaveRemapString(int port)
+		{
+			string valueString = "";
+
+			for (int i = 0; i < 24; i++)
+				valueString += string.Format("{0:00}", mainWindow.RemapSet[port, i]) + (i == 23 ? "" : " ");
+			
+			return WritePrivateProfileString("Controller" + port, "Remap", valueString, INIfilename) != 0 ? true : false;
+		}
+
 		bool SaveEntry(string section, string key, int value)
 		{
 			string valueString = value.ToString();
 			return WritePrivateProfileString(section, key, valueString, INIfilename) != 0 ? true : false;
+		}
+
+		void ReadRemapString(int port)
+		{
+			StringBuilder strBuilder = new StringBuilder(512);
+
+			int nSize = GetPrivateProfileString("Controller" + port, "Remap", "-1", strBuilder, 512, INIfilename);
+
+			if (nSize > 70) for (int i = 0; i < 24; i++)
+			{
+				int value = int.Parse(strBuilder.ToString().Substring(i * 3, 2));
+				mainWindow.RemapSet[port, i] = value;
+			}
 		}
 
 		int ReadEntry(string section, string key)
@@ -82,6 +105,8 @@ namespace DuraznoGUI
 				if (mainWindow.deadzone[port] < 0) mainWindow.deadzone[port] = 0.0;
 				if (mainWindow.antiDeadzone[port] < 0) mainWindow.antiDeadzone[port] = 0.0;
 				if (mainWindow.rumble[port] < 0) mainWindow.rumble[port] = 100.0;
+
+				ReadRemapString(port);
 			}
 		}
 
@@ -102,6 +127,8 @@ namespace DuraznoGUI
 				SaveEntry("Controller" + port, "Deadzone", (int)mainWindow.deadzone[port]);
 				SaveEntry("Controller" + port, "AntiDeadzone", (int)mainWindow.antiDeadzone[port]);
 				SaveEntry("Controller" + port, "Rumble", (int)mainWindow.rumble[port]);
+
+				SaveRemapString(port);
 			}
 		}
 

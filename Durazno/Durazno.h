@@ -20,3 +20,5 @@
 #include <Windows.h>
 #include <XInput.h>
 #include <stdio.h>
+
+#include "..\..\Common\TypeDefs.h"

@@ -18,13 +18,16 @@
 #include <Windows.h>
 #include <stdio.h>
 
+#include "..\..\Common\TypeDefs.h"
 #include "Settings.h"
+
+#include <string>
 
 extern HINSTANCE g_hinstDLL;
 extern _Settings settings[4];
-extern int INIversion;
+extern s32 INIversion;
 
-bool SaveEntry(wchar_t * section, int sectionNumber, wchar_t * key, int value, wchar_t * filename)
+bool SaveEntry(wchar_t * section, s32 sectionNumber, wchar_t * key, s32 value, wchar_t * filename)
 {	
 	wchar_t controller[512] = {0};
 
@@ -39,7 +42,57 @@ bool SaveEntry(wchar_t * section, int sectionNumber, wchar_t * key, int value, w
 	return WritePrivateProfileString(controller,  key, valuestring, filename) ? true : false;
 }
 
-int ReadEntry(wchar_t * section, int sectionNumber, wchar_t * key, wchar_t * filename)
+bool SaveRemap(u8 port, wchar_t * filename)
+{	
+	wchar_t controller[512] = {0};
+	wchar_t valuestring[512] = {0};
+
+	swprintf(controller, 512, L"Controller%d", port);
+		
+	for (int i = 0; i < 24; i++)
+		swprintf(valuestring, 512, i == 0? L"%s%02d" : L"%s %02d", valuestring, settings[port].remap[i].control);
+
+	return WritePrivateProfileString(controller,  L"Remap", valuestring, filename) ? true : false;
+}
+
+void ReadRemap(u8 port, wchar_t * filename)
+{	
+	wchar_t controller[512] = {0};
+	swprintf(controller, 512, L"Controller%d", port);
+	
+	wchar_t returnvalue[512] = {0};
+	s32 nSize = GetPrivateProfileString(controller, L"Remap", L"-1", returnvalue, 512, filename);
+	std::wstring value(returnvalue);
+	
+	if(nSize < 70) return;
+	
+	for (int i = 0; i < 24; i++)
+	{
+		std::wstring val = value.substr(i*3, 2);
+		u8 control = settings[port].remap[i].control = _wtoi(val.c_str());
+
+		if(control < 14) 
+		{
+			if(i < 14) settings[port].remap[i].type = RT_DIGITAL_DIGITAL;
+			else if(i < 16) settings[port].remap[i].type = RT_DIGITAL_TRIGGER;
+			else settings[port].remap[i].type = RT_DIGITAL_ANALOG;
+		}
+		else if(control < 16)
+		{
+			if(i < 14) settings[port].remap[i].type = RT_TRIGGER_DIGITAL;
+			else if(i < 16) settings[port].remap[i].type = RT_TRIGGER_TRIGGER;
+			else settings[port].remap[i].type = RT_TRIGGER_ANALOG;
+		}
+		else
+		{
+			if(i < 14) settings[port].remap[i].type = RT_ANALOG_DIGITAL;
+			else if(i < 16) settings[port].remap[i].type = RT_ANALOG_TRIGGER;
+			else settings[port].remap[i].type = RT_ANALOG_ANALOG;
+		}
+	}
+}
+
+s32 ReadEntry(wchar_t * section, s32 sectionNumber, wchar_t * key, wchar_t * filename)
 {	
 	wchar_t controller[512] = {0};
 
@@ -48,9 +101,9 @@ int ReadEntry(wchar_t * section, int sectionNumber, wchar_t * key, wchar_t * fil
 	else
 		swprintf(controller, 512, L"%s%d", section, sectionNumber);
 	
-	int returnInteger = -1;
+	s32 returnInteger = -1;
 	wchar_t returnvalue[512] = {0};
-	int nSize = GetPrivateProfileString(controller, key, L"-1", returnvalue, 512, filename);
+	s32 nSize = GetPrivateProfileString(controller, key, L"-1", returnvalue, 512, filename);
 
 	 if(nSize < 256) returnInteger = _wtoi(returnvalue);	 
 
@@ -63,7 +116,7 @@ void INI_SaveSettings()
 
 	SaveEntry(L"General", -1, L"INIversion", INIversion, filename);
 
-	for(int port = 0; port < 4; port++)
+	for(s32 port = 0; port < 4; port++)
 	{
 		SaveEntry(L"Controller", port, L"Disable", settings[port].isDisabled?1:0, filename);
 		
@@ -72,10 +125,12 @@ void INI_SaveSettings()
 		SaveEntry(L"Controller", port, L"AxisInvertedRX", settings[port].axisInverted[GP_AXIS_RX]?1:0, filename);
 		SaveEntry(L"Controller", port, L"AxisInvertedRY", settings[port].axisInverted[GP_AXIS_RY]?1:0, filename);
 
-		SaveEntry(L"Controller", port, L"Linearity", (int)(settings[port].linearity*10) +30, filename);
-		SaveEntry(L"Controller", port, L"Deadzone", (int)(settings[port].deadzone * 100), filename);
-		SaveEntry(L"Controller", port, L"AntiDeadzone", (int)(settings[port].antiDeadzone * 100), filename);
-		SaveEntry(L"Controller", port, L"Rumble", (int)(settings[port].rumble * 100), filename);
+		SaveEntry(L"Controller", port, L"Linearity", (s32)(settings[port].linearity*10) +30, filename);
+		SaveEntry(L"Controller", port, L"Deadzone", (s32)(settings[port].deadzone * 100), filename);
+		SaveEntry(L"Controller", port, L"AntiDeadzone", (s32)(settings[port].antiDeadzone * 100), filename);
+		SaveEntry(L"Controller", port, L"Rumble", (s32)(settings[port].rumble * 100), filename);
+
+		SaveRemap(port, filename);
 	}		
 }
 
@@ -85,9 +140,9 @@ void INI_LoadSettings()
 
 	if(ReadEntry(L"General", -1, L"INIversion", filename) != INIversion) return;
 
-	for(int port = 0; port < 4; port++)
+	for(s32 port = 0; port < 4; port++)
 	{
-		int result;
+		s32 result;
 		
 		settings[port].isDisabled = ReadEntry(L"Controller", port, L"Disable", filename) == 1? true : false;
 
@@ -107,5 +162,7 @@ void INI_LoadSettings()
 
 		result = ReadEntry(L"Controller", port, L"Rumble", filename);
 		if(result != -1) settings[port].rumble = result / 100.0f;
+
+		ReadRemap(port, filename);
 	}
 }

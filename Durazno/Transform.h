@@ -17,5 +17,6 @@
 
 #pragma once
 
-void TransformGetState(DWORD dwUserIndex, XINPUT_STATE* pState);
-void TransformSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+void __fastcall TransformGetState(DWORD dwUserIndex, XINPUT_STATE* pState);
+void __fastcall TransformRemap(DWORD dwUserIndex, XINPUT_STATE* pState);
+void __fastcall TransformSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);

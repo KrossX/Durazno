@@ -25,6 +25,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -48,6 +49,10 @@ namespace DuraznoGUI
 		public double[] linearity = new double[4];
 			
 		int curPad = 0;
+		bool remapOpened = false;
+
+		public int[,] RemapSet = new int[4,24];
+		List<Remap_Sel_Button> RemapControl;
 		
 		//
 		// From FreewareFire's info (GPLv3)
@@ -66,12 +71,28 @@ namespace DuraznoGUI
 
 			if (Version_Label != null) Version_Label.Content = "v0.5 r" + SvnRevision.SVN_REV;
 
-			INIstuff = new INIsettings(this, 1); // Set INI version here
+			INIstuff = new INIsettings(this, 2); // Set INI version here
+
+			for (int i = 0; i < 24; i++) 
+				RemapSet[0, i] = RemapSet[1, i] = RemapSet[2, i] = RemapSet[3, i] = i;
+
+			INIstuff.LoadSettings();
+
+			RemapControl = new List<Remap_Sel_Button>
+			{
+				R_Dpad_Up, R_Dpad_Down, R_Dpad_Left, R_Dpad_Right, R_Button_Start, R_Button_Back,
+				R_LeftStick_Button, R_RightStick_Button, R_Shoulder_Left, R_Shoulder_Right,
+				R_Button_A, R_Button_B, R_Button_X, R_Button_Y, R_Trigger_Left, R_Trigger_Right,
+				R_LeftStick_XP, R_LeftStick_XM, R_LeftStick_YP, R_LeftStick_YM,
+				R_RightStick_XP, R_RightStick_XM, R_RightStick_YP, R_RightStick_YM
+			};
+
+			for (int i = 0; i < 24; i++)
+				RemapControl[i].SetNewInput(RemapSet[curPad, i]);
 
 			for (curPad = 0; curPad < 4; curPad++) SetDefaults();
 			curPad = 0;
-
-			INIstuff.LoadSettings();
+						
 			INIstuff.SaveSettings();
 
 			UpdateControls();
@@ -123,10 +144,16 @@ namespace DuraznoGUI
 				dLinearity = dLinearity > 0 ? dLinearity + 1 : dLinearity < 0 ? dLinearity - 1 : dLinearity;
 				Linearity_Value.Content = dLinearity.ToString("F2");
 			}
+
+			for (int i = 0; i < 24; i++)
+				RemapControl[i].SetNewInput(RemapSet[curPad, i]);
 		}
 
 		private void Close_Label_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			for (int i = 0; i < 24; i++)
+				RemapSet[curPad, i] = RemapControl[i].GetInputValue();
+
 			INIstuff.SaveSettings();
 			Close();
 		}
@@ -198,6 +225,9 @@ namespace DuraznoGUI
 		{
 			if (PadSelection != null)
 			{
+				for (int i = 0; i < 24; i++)
+					RemapSet[curPad, i] = RemapControl[i].GetInputValue();
+				
 				curPad++;
 				if(curPad > 3) curPad = 0;
 				
@@ -228,5 +258,12 @@ namespace DuraznoGUI
 
 		private void InvertRY_Checked(object sender, System.Windows.RoutedEventArgs e) { invertedAxis[curPad, 3] = true; }
 		private void InvertRY_Unchecked(object sender, System.Windows.RoutedEventArgs e) { invertedAxis[curPad, 3] = false; }
+
+		private void RemapButton_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{			
+			Storyboard story = FindResource(remapOpened ? "RemapClose" : "RemapOpen") as Storyboard;
+			story.Begin();
+			remapOpened = !remapOpened;
+		}
 	}
 }
