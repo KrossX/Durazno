@@ -22,6 +22,7 @@
 
 extern HINSTANCE g_hinstDLL;
 extern _Settings settings[4];
+extern int INIversion;
 
 bool SaveEntry(wchar_t * section, int sectionNumber, wchar_t * key, int value, wchar_t * filename)
 {	
@@ -60,6 +61,8 @@ void INI_SaveSettings()
 {
 	wchar_t filename[] = L".\\Durazno.ini";
 
+	SaveEntry(L"General", -1, L"INIversion", INIversion, filename);
+
 	for(int port = 0; port < 4; port++)
 	{
 		SaveEntry(L"Controller", port, L"Disable", settings[port].isDisabled?1:0, filename);
@@ -79,6 +82,8 @@ void INI_SaveSettings()
 void INI_LoadSettings()
 {
 	wchar_t filename[] = L".\\Durazno.ini";
+
+	if(ReadEntry(L"General", -1, L"INIversion", filename) != INIversion) return;
 
 	for(int port = 0; port < 4; port++)
 	{

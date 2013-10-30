@@ -66,7 +66,7 @@ namespace DuraznoGUI
 
 			if (Version_Label != null) Version_Label.Content = "v0.5 r" + SvnRevision.SVN_REV;
 
-			INIstuff = new INIsettings(this);
+			INIstuff = new INIsettings(this, 1); // Set INI version here
 
 			for (curPad = 0; curPad < 4; curPad++) SetDefaults();
 			curPad = 0;

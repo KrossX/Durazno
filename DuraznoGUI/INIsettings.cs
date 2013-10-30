@@ -32,11 +32,12 @@ namespace DuraznoGUI
 
 		MainWindow mainWindow;
 		const string INIfilename = ".\\Durazno.INI";
+		int INIversion;
 
-
-		public INIsettings(MainWindow mWin)
+		public INIsettings(MainWindow mWin, int version)
 		{
 			mainWindow = mWin;
+			INIversion = version;
 		}
 
 		bool SaveEntry(string section, string key, int value)
@@ -60,6 +61,8 @@ namespace DuraznoGUI
 
 		public void LoadSettings()
 		{
+			if (ReadEntry("General", "INIversion") != INIversion) return;
+			
 			for (int port = 0; port < 4; port++)
 			{
 				mainWindow.isEnabled[port] = ReadEntry("Controller" + port, "Disable") == 1 ? false : true;
@@ -84,6 +87,8 @@ namespace DuraznoGUI
 
 		public void SaveSettings()
 		{
+			SaveEntry("General", "INIversion", INIversion);
+			
 			for (int port = 0; port < 4; port++)
 			{
 				SaveEntry("Controller" + port, "Disable", mainWindow.isEnabled[port] ? 0 : 1);

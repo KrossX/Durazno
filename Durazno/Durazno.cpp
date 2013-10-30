@@ -19,6 +19,7 @@ HINSTANCE g_hinstDLL = NULL;
 HINSTANCE realXInput = NULL;
 
 _Settings settings[4];
+int INIversion = 1; // INI version stuff
 
 void LoadSystemXInputDLL()
 {
@@ -38,7 +39,7 @@ void LoadSystemXInputDLL()
 	else
 		swprintf_s(buffer,L"%s\\%s",sysdir,L"xinput1_3.dll");
 
-	if (!realXInput) realXInput = LoadLibrary(buffer);
+	realXInput = LoadLibrary(buffer);
 }
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
