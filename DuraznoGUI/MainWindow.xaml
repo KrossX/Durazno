@@ -1,0 +1,71 @@
+﻿<!-- 
+  Durazno - XInput to XInput Wrapper
+  Copyright (C) 2012 KrossX
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DuraznoGUI" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="DuraznoGUI.MainWindow"
+        Title="Durazno" Height="427" Width="395" ResizeMode="NoResize" BorderBrush="Black" BorderThickness="1" WindowStyle="None" Icon="Icon.ico">
+	<Window.Resources>
+		<Storyboard x:Key="CloseButton_On">
+			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Close_Label">
+				<SplineColorKeyFrame KeyTime="0:0:0.4" Value="Red"/>
+			</ColorAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="CloseButton_Off">
+			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Close_Label">
+				<SplineColorKeyFrame KeyTime="0:0:0.2" Value="#FFB6B6B6"/>
+			</ColorAnimationUsingKeyFrames>
+		</Storyboard>
+	</Window.Resources>
+	<Window.Triggers>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="Close_Label">
+			<BeginStoryboard Storyboard="{StaticResource CloseButton_On}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="Close_Label">
+			<BeginStoryboard x:Name="CloseButton_Off_BeginStoryboard" Storyboard="{StaticResource CloseButton_Off}"/>
+		</EventTrigger>
+	</Window.Triggers>
+	<Window.Background>
+		<ImageBrush ImageSource="bg2.png"/>
+	</Window.Background>
+    <Grid>
+    	<Label x:Name="Durazno_Title" Content="Durazno" Margin="104.5,19.5,0,0" Foreground="#FFB6B6B6" FontFamily="/Durazno;component/Fonts/#Angelina" FontSize="64" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Bold"/>
+    	<Grid x:Name="DragMe" Height="107.017" VerticalAlignment="Top" Background="White" Opacity="0" MouseLeftButtonDown="DragMe_MouseLeftButtonDown"/>
+    	<local:XboxButton x:Name="PadSelection" HorizontalAlignment="Left" Height="78.13" Margin="15,15,0,0" VerticalAlignment="Top" Width="78.13" MouseLeftButtonUp="PadSelection_MouseLeftButtonUp" RenderTransformOrigin="0.5,0.5"/>
+    	<Label x:Name="Close_Label" Content="X" HorizontalAlignment="Right" Margin="0,8,8,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24" Foreground="#FFB6B6B6" MouseLeftButtonDown="Close_Label_MouseLeftButtonDown"/>
+    	<CheckBox x:Name="ControllerEnabled" Content="Controller Enabled" Margin="20,124,0,0" VerticalAlignment="Top" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="ControllerEnabled_Checked" Unchecked="ControllerEnabled_Unchecked"/>
+    	<Grid x:Name="Settings" Margin="20,175,20,54">
+    		<CheckBox x:Name="InvertLX" Content="Invert Left Stick X" Margin="4,0,0,172" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Bottom" Checked="InvertLX_Checked" Unchecked="InvertLX_Unchecked"/>
+    		<CheckBox x:Name="InvertLY" Content="Invert Left Stick Y" Margin="4,0,0,144" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="InvertLY_Checked" Unchecked="InvertLY_Unchecked"/>
+    		<CheckBox x:Name="InvertRX" Content="Invert Right Stick X" Margin="0,0,0,172" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Checked="InvertRX_Checked" Unchecked="InvertRX_Unchecked"/>
+    		<CheckBox x:Name="InvertRY" Content="Invert Right Stick Y" Margin="0,0,0,144" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" Checked="InvertRY_Checked" Unchecked="InvertRY_Unchecked"/>
+    		<Slider x:Name="Rumble_Slider" Margin="71.9,78,58,96" Maximum="200" SmallChange="1" LargeChange="10" TickFrequency="50" Value="100" d:LayoutOverrides="Height" ValueChanged="Rumble_Slider_ValueChanged"/>
+    		<Label x:Name="Rumble_Label" Content="Rumble" HorizontalAlignment="Left" Margin="0,72,0,90" Foreground="#FFB6B6B6" FontSize="16" d:LayoutOverrides="Height"/>
+    		<Label x:Name="Rumble_Value" Content="100%" HorizontalAlignment="Right" Margin="0,72,0,90" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" d:LayoutOverrides="Height"/>
+    		<Slider x:Name="Deadzone_Slider" Margin="92.9,0,58,53" Maximum="100" SmallChange="1" VerticalAlignment="Bottom" LargeChange="10" TickFrequency="25" ValueChanged="Deadzone_Slider_ValueChanged"/>
+    		<Label x:Name="Deadzone_Label" Content="Deadzone" HorizontalAlignment="Left" Margin="0,0,0,47" Foreground="#FFB6B6B6" VerticalAlignment="Bottom" FontSize="16"/>
+    		<Label x:Name="Deadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,0,0,47" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6"/>
+    		<Slider x:Name="Linearity_Slider" Margin="80.3,0,58,2" TickPlacement="Both" Maximum="3" Minimum="-3" SmallChange="1" VerticalAlignment="Bottom" ValueChanged="Linearity_Slider_ValueChanged"/>
+    		<Label x:Name="Linearity_Label" Content="Linearity" HorizontalAlignment="Left" Foreground="#FFB6B6B6" VerticalAlignment="Bottom" FontSize="16"/>
+    		<Label x:Name="Linearity_Value" Content="-4" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" Margin="0,0,20,0"/>
+    	</Grid>
+    	<Label Content="KrossX's Magical Tools (krossx@live.com)" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="10.667" Opacity="0.25"/>
+    	<Label Content="v0.5" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="#FFB6B6B6" FontSize="10.667"/>
+    </Grid>
+</Window>

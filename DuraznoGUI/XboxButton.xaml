@@ -1,0 +1,117 @@
+﻿<!-- 
+  Durazno - XInput to XInput Wrapper
+  Copyright (C) 2012 KrossX
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<UserControl
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	x:Class="DuraznoGUI.XboxButton"
+	x:Name="UserControl"
+	d:DesignWidth="100" d:DesignHeight="100">
+	<UserControl.Resources>
+		<Storyboard x:Key="LightPulse" RepeatBehavior="Forever">
+			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="rectangle">
+				<SplineColorKeyFrame KeyTime="0" Value="#FF37FF00"/>
+				<SplineColorKeyFrame KeyTime="0:0:1" Value="#CC37FF00"/>
+				<SplineColorKeyFrame KeyTime="0:0:2" Value="#FF37FF00"/>
+			</ColorAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="Hover_On">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ellipse">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="Hover_Off">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="ellipse">
+				<SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="Click_Down">
+			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="ellipse1">
+				<SplineColorKeyFrame KeyTime="0" Value="#FF606060"/>
+			</ColorAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="Click_Up">
+			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)" Storyboard.TargetName="ellipse1">
+				<SplineColorKeyFrame KeyTime="0" Value="#FF7E7E7E"/>
+			</ColorAnimationUsingKeyFrames>
+		</Storyboard>
+		<Storyboard x:Key="LightOn">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="rectangle">
+				<SplineDoubleKeyFrame KeyTime="0" Value="0"/>
+				<SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+		</Storyboard>
+	</UserControl.Resources>
+	<UserControl.Triggers>
+		<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+			<BeginStoryboard Storyboard="{StaticResource LightPulse}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
+			<BeginStoryboard x:Name="Click_Down_BeginStoryboard" Storyboard="{StaticResource Click_Down}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="UIElement.MouseLeftButtonUp">
+			<BeginStoryboard x:Name="Click_Up_BeginStoryboard" Storyboard="{StaticResource Click_Up}"/>
+			<BeginStoryboard x:Name="LightOn_BeginStoryboard" Storyboard="{StaticResource LightOn}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseEnter">
+			<BeginStoryboard x:Name="Hover_On_BeginStoryboard" Storyboard="{StaticResource Hover_On}"/>
+		</EventTrigger>
+		<EventTrigger RoutedEvent="Mouse.MouseLeave">
+			<BeginStoryboard x:Name="Hover_Off_BeginStoryboard" Storyboard="{StaticResource Hover_Off}"/>
+		</EventTrigger>
+	</UserControl.Triggers>
+
+	<Viewbox Stretch="Fill">
+
+		<Grid Height="100" Width="100">
+			<Ellipse RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2" Grid.ColumnSpan="2" Fill="#7FB6B6B6" Margin="5"/>
+			<Rectangle x:Name="rectangle" Height="50" Margin="0" Width="50" HorizontalAlignment="Left" VerticalAlignment="Top">
+				<Rectangle.Fill>
+					<RadialGradientBrush RadiusY="0.717" RadiusX="0.717" GradientOrigin="-0.209,1.194" Center="0.285,0.72">
+						<RadialGradientBrush.RelativeTransform>
+							<TransformGroup>
+								<ScaleTransform CenterY="0.5" CenterX="0.5" ScaleY="1" ScaleX="1"/>
+								<SkewTransform AngleY="0" AngleX="0" CenterY="0.5" CenterX="0.5"/>
+								<RotateTransform Angle="-90.298" CenterY="0.5" CenterX="0.5"/>
+								<TranslateTransform/>
+							</TransformGroup>
+						</RadialGradientBrush.RelativeTransform>
+						<GradientStop Color="#FF37FF00" Offset="0.688"/>
+						<GradientStop Offset="1" Color="#0037FF00"/>
+					</RadialGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<Ellipse x:Name="ellipse" RenderTransformOrigin="0.5,0.5" Margin="5" Opacity="0">
+				<Ellipse.Fill>
+					<RadialGradientBrush>
+						<GradientStop Color="White" Offset="0.5"/>
+						<GradientStop Offset="1"/>
+					</RadialGradientBrush>
+				</Ellipse.Fill>
+			</Ellipse>
+			<Grid Margin="5">
+				<Rectangle Fill="#FF4B4B4B" Height="1" Margin="0,5" StrokeThickness="13" VerticalAlignment="Center"/>
+				<Rectangle Fill="#FF4B4B4B" Margin="5,0" StrokeThickness="13" HorizontalAlignment="Center" Width="1"/>
+			</Grid>
+			<Ellipse x:Name="ellipse1" Stroke="#FF565656" RenderTransformOrigin="0.5,0.5" Grid.RowSpan="2" Grid.ColumnSpan="2" Margin="18" Fill="#FF7E7E7E"/>
+		</Grid>
+	</Viewbox>
+</UserControl>
