@@ -49,6 +49,7 @@ namespace Gamepad
 		THUMB_RX_M,
 		THUMB_RY_P,
 		THUMB_RY_M,
+		DISABLED
 	};
 };
 
@@ -271,6 +272,9 @@ s32 __fastcall RemapGetValue(_Remap * remap, XINPUT_GAMEPAD* gamepad)
 
 	case Gamepad::THUMB_RY_M:
 		return gamepad->sThumbRY < 0 ? RemapType(gamepad->sThumbRY, type) : 0;
+
+	case Gamepad::DISABLED:
+		return 0;
 	}
 
 	return 0;
@@ -343,6 +347,8 @@ extern s32 __stdcall GetControllerInput(s32 port)
 		DWORD result = DuraznoGetState(port, &state);
 	
 		if(result != ERROR_SUCCESS) return -1;
+
+		if(GetAsyncKeyState(VK_DELETE)) return Gamepad::DISABLED;
 	
 		if(state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP)    return Gamepad::DPAD_UP;
 		if(state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN)  return Gamepad::DPAD_DOWN;
@@ -365,7 +371,7 @@ extern s32 __stdcall GetControllerInput(s32 port)
 
 		s32 threshold = 100;
 
-		if(state.Gamepad.bLeftTrigger > threshold)  return Gamepad::LEFT_TRIGGER;
+		if(state.Gamepad.bLeftTrigger  > threshold) return Gamepad::LEFT_TRIGGER;
 		if(state.Gamepad.bRightTrigger > threshold) return Gamepad::RIGHT_TRIGGER;
 	
 		threshold = 16384;

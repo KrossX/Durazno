@@ -52,7 +52,7 @@ namespace DuraznoGUI
 			{
 				"Up", "Down", "Left", "Right", "Start", "Back",
 				"LS", "RS", "LB", "RB", "A", "B", "X", "Y", "LT", "RT",
-				"LX+", "LX-", "LY+", "LY-", "RX+", "RX-","RY+", "RY-"
+				"LX+", "LX-", "LY+", "LY-", "RX+", "RX-","RY+", "RY-", "OFF"
 			};			
 						
 			this.InitializeComponent();
@@ -99,7 +99,7 @@ namespace DuraznoGUI
 		private void UserControl_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
 			starting.Begin();
-			new Thread(new ThreadStart(Worker)).Start();			
+			new Thread(new ThreadStart(Worker)).Start();
 		}
 
 		
