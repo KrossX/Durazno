@@ -156,7 +156,8 @@ void INI_SaveSettings()
 		SaveEntry(L"Controller", port, L"AxisInvertedRX", settings[port].axisInverted[GP_AXIS_RX]?1:0, filename);
 		SaveEntry(L"Controller", port, L"AxisInvertedRY", settings[port].axisInverted[GP_AXIS_RY]?1:0, filename);
 
-		SaveEntry(L"Controller", port, L"TriggerDeadzone", settings[port].triggerDeadzone, filename);
+		SaveEntry(L"Controller", port, L"TriggerMin", settings[port].triggerMin, filename);
+		SaveEntry(L"Controller", port, L"TriggerMax", settings[port].triggerMax, filename);
 		SaveEntry(L"Controller", port, L"Linearity", (s32)(settings[port].linearity*10) +30, filename);
 		SaveEntry(L"Controller", port, L"Deadzone", (s32)(settings[port].deadzone * 100), filename);
 		SaveEntry(L"Controller", port, L"AntiDeadzone", (s32)(settings[port].antiDeadzone * 100), filename);
@@ -191,8 +192,11 @@ void INI_LoadSettings()
 		settings[port].axisInverted[GP_AXIS_RX] = ReadEntry(L"Controller", port, L"AxisInvertedRX", filename) == 1? true : false;
 		settings[port].axisInverted[GP_AXIS_RY] = ReadEntry(L"Controller", port, L"AxisInvertedRY", filename) == 1? true : false;
 
-		result = ReadEntry(L"Controller", port, L"TriggerDeadzone",  filename);
-		if(result != -1) settings[port].triggerDeadzone = result & 0xFF;
+		result = ReadEntry(L"Controller", port, L"TriggerMin",  filename);
+		if(result != -1) settings[port].triggerMin = result & 0xFF;
+
+		result = ReadEntry(L"Controller", port, L"TriggerMax",  filename);
+		if(result != -1) settings[port].triggerMax = result & 0xFF;
 
 		result = ReadEntry(L"Controller", port, L"Linearity",  filename);
 		if(result != -1) settings[port].linearity = result/10.0 - 3.0;

@@ -65,7 +65,7 @@ public:
 	f64 deadzone, antiDeadzone, rumble;
 	bool axisInverted[4];
 	f64 linearity;
-	u8 triggerDeadzone;
+	u8 triggerMin, triggerMax;
 	
 	_Remap remap[24];
 	

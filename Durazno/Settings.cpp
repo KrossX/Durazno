@@ -27,7 +27,8 @@ _Settings::_Settings()
 	antiDeadzone = 0.0;
 	rumble = 1.0;
 	linearity = 0;
-	triggerDeadzone = 0;
+	triggerMin = 0;
+	triggerMax = 255;
 	
 	for(s16 i = 0; i < 4; i++)
 	{
