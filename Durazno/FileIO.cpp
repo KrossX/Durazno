@@ -20,13 +20,15 @@
 
 #include "TypeDefs.h"
 #include "Settings.h"
+#include "FileIO.h"
 
 #include <string>
 
 extern HINSTANCE g_hinstDLL;
-extern _Settings settings[4];
 extern s32 INIversion;
 extern std::wstring customDLL;
+
+const f64 FACTOR = 1000.0;
 
 bool SaveEntry(wchar_t * section, s32 sectionNumber, wchar_t * key, s32 value, wchar_t * filename)
 {	
@@ -55,7 +57,7 @@ bool SaveString(wchar_t * section, s32 sectionNumber, wchar_t * key, std::wstrin
 	return WritePrivateProfileString(controller,  key, value.c_str(), filename) ? true : false;
 }
 
-bool SaveRemap(u8 port, wchar_t * filename)
+bool SaveRemap(u8 port, wchar_t * filename, SETTINGS settings[4])
 {	
 	wchar_t controller[512] = {0};
 	wchar_t valuestring[512] = {0};
@@ -68,7 +70,7 @@ bool SaveRemap(u8 port, wchar_t * filename)
 	return WritePrivateProfileString(controller,  L"Remap", valuestring, filename) ? true : false;
 }
 
-void ReadRemap(u8 port, wchar_t * filename)
+void ReadRemap(u8 port, wchar_t * filename, SETTINGS settings[4])
 {	
 	wchar_t controller[512] = {0};
 	swprintf(controller, 512, L"Controller%d", port);
@@ -139,7 +141,7 @@ std::wstring ReadString(wchar_t * section, s32 sectionNumber, wchar_t * key, wch
 	return returnString;
 }
 
-void INI_SaveSettings()
+void INI_SaveSettings(SETTINGS *settings)
 {
 	wchar_t filename[] = L".\\Durazno.ini";
 
@@ -148,27 +150,37 @@ void INI_SaveSettings()
 
 	for(s32 port = 0; port < 4; port++)
 	{
-		SaveEntry(L"Controller", port, L"Disable", settings[port].isDisabled?1:0, filename);
-		SaveEntry(L"Controller", port, L"Dummy", settings[port].isDummy?1:0, filename);
-		
-		SaveEntry(L"Controller", port, L"AxisInvertedLX", settings[port].axisInverted[GP_AXIS_LX]?1:0, filename);
-		SaveEntry(L"Controller", port, L"AxisInvertedLY", settings[port].axisInverted[GP_AXIS_LY]?1:0, filename);
-		SaveEntry(L"Controller", port, L"AxisInvertedRX", settings[port].axisInverted[GP_AXIS_RX]?1:0, filename);
-		SaveEntry(L"Controller", port, L"AxisInvertedRY", settings[port].axisInverted[GP_AXIS_RY]?1:0, filename);
+		SETTINGS &set = settings[port];
 
-		SaveEntry(L"Controller", port, L"TriggerMin", settings[port].triggerMin, filename);
-		SaveEntry(L"Controller", port, L"TriggerMax", settings[port].triggerMax, filename);
-		SaveEntry(L"Controller", port, L"Linearity", (s32)(settings[port].linearity*10) +30, filename);
-		SaveEntry(L"Controller", port, L"Deadzone", (s32)(settings[port].deadzone * 100), filename);
-		SaveEntry(L"Controller", port, L"AntiDeadzone", (s32)(settings[port].antiDeadzone * 100), filename);
-		SaveEntry(L"Controller", port, L"Rumble", (s32)(settings[port].rumble * 100), filename);
-		SaveEntry(L"Controller", port, L"Port", (s32)(settings[port].port), filename);
+		SaveEntry(L"Controller", port, L"Port", (s32)(set.port), filename);
+		SaveEntry(L"Controller", port, L"Dummy", set.isDummy ? 1 : 0, filename);
+		SaveEntry(L"Controller", port, L"Disable", set.isDisabled ? 1 : 0, filename);
+		SaveEntry(L"Controller", port, L"LinearDZ", set.linearDZ ? 1 : 0, filename);
+		SaveEntry(L"Controller", port, L"LinearADZ", set.linearADZ ? 1 : 0, filename);
 
-		SaveRemap(port, filename);
+		SaveEntry(L"Controller", port, L"AxisInvertedLX", set.stickL.invertedX ? 1 : 0, filename);
+		SaveEntry(L"Controller", port, L"AxisInvertedLY", set.stickL.invertedY ? 1 : 0, filename);
+		SaveEntry(L"Controller", port, L"AxisInvertedRX", set.stickR.invertedX ? 1 : 0, filename);
+		SaveEntry(L"Controller", port, L"AxisInvertedRY", set.stickR.invertedY ? 1 : 0, filename);
+
+		SaveEntry(L"Controller", port, L"TriggerMin", set.triggerMin, filename);
+		SaveEntry(L"Controller", port, L"TriggerMax", set.triggerMax, filename);
+
+		SaveEntry(L"Controller", port, L"Rumble", (s32)(set.rumble * FACTOR), filename);
+
+		SaveEntry(L"Controller", port, L"L_Linearity", (s32)(set.stickL.linearity * 100.0) + 300, filename);
+		SaveEntry(L"Controller", port, L"L_Deadzone", (s32)(set.stickL.deadzone * FACTOR), filename);
+		SaveEntry(L"Controller", port, L"L_AntiDeadzone", (s32)(set.stickL.antiDeadzone * FACTOR), filename);
+
+		SaveEntry(L"Controller", port, L"R_Linearity", (s32)(set.stickR.linearity * 100.0) + 300, filename);
+		SaveEntry(L"Controller", port, L"R_Deadzone", (s32)(set.stickR.deadzone * FACTOR), filename);
+		SaveEntry(L"Controller", port, L"R_AntiDeadzone", (s32)(set.stickR.antiDeadzone * FACTOR), filename);
+
+		SaveRemap(port, filename, settings);
 	}
 }
 
-void INI_LoadSettings()
+void INI_LoadSettings(SETTINGS *settings)
 {
 	wchar_t filename[] = L".\\Durazno.ini";
 
@@ -182,37 +194,55 @@ void INI_LoadSettings()
 	
 	for(s32 port = 0; port < 4; port++)
 	{
+		SETTINGS &set = settings[port];
 		s32 result;
 		
-		settings[port].isDisabled = ReadEntry(L"Controller", port, L"Disable", filename) == 1? true : false;
-		settings[port].isDummy = ReadEntry(L"Controller", port, L"Dummy", filename) == 1? true : false;
+		result = ReadEntry(L"Controller", port, L"Port", filename);
+		if (result != -1) set.port = result % 4;
 
-		settings[port].axisInverted[GP_AXIS_LX] = ReadEntry(L"Controller", port, L"AxisInvertedLX", filename) == 1? true : false;
-		settings[port].axisInverted[GP_AXIS_LY] = ReadEntry(L"Controller", port, L"AxisInvertedLY", filename) == 1? true : false;
-		settings[port].axisInverted[GP_AXIS_RX] = ReadEntry(L"Controller", port, L"AxisInvertedRX", filename) == 1? true : false;
-		settings[port].axisInverted[GP_AXIS_RY] = ReadEntry(L"Controller", port, L"AxisInvertedRY", filename) == 1? true : false;
+		set.isDisabled = ReadEntry(L"Controller", port, L"Disable", filename) == 1 ? true : false;
+		set.isDummy = ReadEntry(L"Controller", port, L"Dummy", filename) == 1 ? true : false;
+		set.linearDZ = ReadEntry(L"Controller", port, L"LinearDZ", filename) == 1 ? true : false;
+		set.linearADZ = ReadEntry(L"Controller", port, L"LinearADZ", filename) == 1 ? true : false;
 
-		result = ReadEntry(L"Controller", port, L"TriggerMin",  filename);
-		if(result != -1) settings[port].triggerMin = result & 0xFF;
+		set.stickL.invertedX = ReadEntry(L"Controller", port, L"AxisInvertedLX", filename) == 1 ? true : false;
+		set.stickL.invertedY = ReadEntry(L"Controller", port, L"AxisInvertedLY", filename) == 1 ? true : false;
+		set.stickR.invertedX = ReadEntry(L"Controller", port, L"AxisInvertedRX", filename) == 1 ? true : false;
+		set.stickR.invertedY = ReadEntry(L"Controller", port, L"AxisInvertedRY", filename) == 1 ? true : false;
 
-		result = ReadEntry(L"Controller", port, L"TriggerMax",  filename);
-		if(result != -1) settings[port].triggerMax = result & 0xFF;
+		result = ReadEntry(L"Controller", port, L"TriggerMin", filename);
+		if (result != -1) set.triggerMin = result & 0xFF;
 
-		result = ReadEntry(L"Controller", port, L"Linearity",  filename);
-		if(result != -1) settings[port].linearity = result/10.0 - 3.0;
-
-		result = ReadEntry(L"Controller", port, L"Deadzone",  filename);
-		if(result != -1) settings[port].deadzone = result / 100.0f;
-
-		result = ReadEntry(L"Controller", port, L"AntiDeadzone",  filename);
-		if(result != -1) settings[port].antiDeadzone = result / 100.0f;
+		result = ReadEntry(L"Controller", port, L"TriggerMax", filename);
+		if (result != -1) set.triggerMax = result & 0xFF;
 
 		result = ReadEntry(L"Controller", port, L"Rumble", filename);
-		if(result != -1) settings[port].rumble = result / 100.0f;
+		if (result != -1) set.rumble = result / FACTOR;
 
-		result = ReadEntry(L"Controller", port, L"Port", filename);
-		if(result != -1) settings[port].port = result % 4;
+		result = ReadEntry(L"Controller", port, L"L_Linearity", filename);
+		if (result != -1) set.stickL.linearity = (result - 300.0) / 100.0;
 
-		ReadRemap(port, filename);
+		result = ReadEntry(L"Controller", port, L"L_Deadzone", filename);
+		if (result != -1) set.stickL.deadzone = result / FACTOR;
+
+		result = ReadEntry(L"Controller", port, L"L_AntiDeadzone", filename);
+		if (result != -1) set.stickL.antiDeadzone = result / FACTOR;
+
+		result = ReadEntry(L"Controller", port, L"R_Linearity", filename);
+		if (result != -1) set.stickR.linearity = (result - 300.0) / 100.0;
+
+		result = ReadEntry(L"Controller", port, L"R_Deadzone", filename);
+		if (result != -1) set.stickR.deadzone = result / FACTOR;
+
+		result = ReadEntry(L"Controller", port, L"R_AntiDeadzone", filename);
+		if (result != -1) set.stickR.antiDeadzone = result / FACTOR;
+
+		ReadRemap(port, filename, settings);
 	}
+}
+
+void INI_ReloadSettings()
+{
+	extern SETTINGS settings[4];
+	INI_LoadSettings(settings);
 }

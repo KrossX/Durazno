@@ -23,7 +23,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
 	x:Class="DuraznoGUI.Remap_Sel_Button"
-	x:Name="UserControl" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="UserControl_MouseLeftButtonDown" Height="22.5" Width="74.605">
+	x:Name="UserControl" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="UserControl_MouseLeftButtonDown">
 	<UserControl.Resources>
 		<Storyboard x:Key="Hover_On">
 			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="UserControl">
@@ -98,7 +98,8 @@
 		</TransformGroup>
 	</UserControl.RenderTransform>
 
-	<Grid x:Name="LayoutRoot">
+	<Viewbox Width="75" Height="22" HorizontalAlignment="Center" VerticalAlignment="Center">
+	<Grid x:Name="LayoutRoot" Width="75" Height="22">
 		<Rectangle x:Name="Background_Glow" Fill="{Binding Background, ElementName=UserControl}" StrokeThickness="0">
 			<Rectangle.Effect>
 				<BlurEffect/>
@@ -117,4 +118,5 @@
 			</Ellipse.RenderTransform>
 		</Ellipse>
 	</Grid>
+	</Viewbox>
 </UserControl>

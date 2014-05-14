@@ -20,7 +20,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DuraznoGUI" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="window" mc:Ignorable="d" x:Class="DuraznoGUI.MainWindow"
-        Title="Durazno" Height="427" Width="395" ResizeMode="NoResize" BorderBrush="Black" BorderThickness="1" WindowStyle="None" Icon="Icon.ico">
+        Title="Durazno" Height="427" Width="440" ResizeMode="NoResize" BorderBrush="Black" BorderThickness="1" WindowStyle="None" Icon="Icon.ico">
 	<Window.Resources>
 		<Storyboard x:Key="CloseButton_On">
 			<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(TextElement.Foreground).(SolidColorBrush.Color)" Storyboard.TargetName="Close_Label">
@@ -32,86 +32,19 @@
 				<SplineColorKeyFrame KeyTime="0:0:0.2" Value="#FFB6B6B6"/>
 			</ColorAnimationUsingKeyFrames>
 		</Storyboard>
-		<Storyboard x:Key="RemapButton_On">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="RemapButton">
-				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="-25">
-					<EasingDoubleKeyFrame.EasingFunction>
-						<CircleEase EasingMode="EaseOut"/>
-					</EasingDoubleKeyFrame.EasingFunction>
-				</EasingDoubleKeyFrame>
+		<Storyboard x:Key="Sticks_On">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="SettingsL">
+				<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
+			</DoubleAnimationUsingKeyFrames>
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="SettingsR">
+				<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
-		<Storyboard x:Key="RamapButton_Off">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" Storyboard.TargetName="RemapButton">
-				<EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
-					<EasingDoubleKeyFrame.EasingFunction>
-						<CircleEase EasingMode="EaseOut"/>
-					</EasingDoubleKeyFrame.EasingFunction>
-				</EasingDoubleKeyFrame>
+		<Storyboard x:Key="Sticks_Off">
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="SettingsL">
+				<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
 			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-		<Storyboard x:Key="RemapOpen">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="window">
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="866">
-					<EasingDoubleKeyFrame.EasingFunction>
-						<CircleEase EasingMode="EaseOut"/>
-					</EasingDoubleKeyFrame.EasingFunction>
-				</EasingDoubleKeyFrame>
-			</DoubleAnimationUsingKeyFrames>
-			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="Close_Label">
-				<DiscreteObjectKeyFrame KeyTime="0:0:1" Value="{x:Static Visibility.Visible}"/>
-			</ObjectAnimationUsingKeyFrames>
-			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="Version_Label">
-				<DiscreteObjectKeyFrame KeyTime="0:0:1" Value="{x:Static Visibility.Visible}"/>
-			</ObjectAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Close_Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Version_Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RemapControls">
-				<DiscreteObjectKeyFrame KeyTime="0:0:1" Value="{x:Static Visibility.Visible}"/>
-			</ObjectAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RemapControls">
-				<EasingDoubleKeyFrame KeyTime="0:0:1" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="1"/>
-			</DoubleAnimationUsingKeyFrames>
-		</Storyboard>
-		<Storyboard x:Key="RemapClose">
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="window">
-				<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="866"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="395">
-					<EasingDoubleKeyFrame.EasingFunction>
-						<CircleEase EasingMode="EaseOut"/>
-					</EasingDoubleKeyFrame.EasingFunction>
-				</EasingDoubleKeyFrame>
-			</DoubleAnimationUsingKeyFrames>
-			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="Close_Label">
-				<DiscreteObjectKeyFrame KeyTime="0:0:1.2" Value="{x:Static Visibility.Visible}"/>
-			</ObjectAnimationUsingKeyFrames>
-			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="Version_Label">
-				<DiscreteObjectKeyFrame KeyTime="0:0:1.2" Value="{x:Static Visibility.Visible}"/>
-			</ObjectAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Close_Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.4" Value="1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Version_Label">
-				<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.2" Value="0"/>
-				<EasingDoubleKeyFrame KeyTime="0:0:1.4" Value="1"/>
-			</DoubleAnimationUsingKeyFrames>
-			<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="RemapControls">
-				<DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-			</ObjectAnimationUsingKeyFrames>
-			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="RemapControls">
-				<EasingDoubleKeyFrame KeyTime="0" Value="1"/>
+			<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="SettingsR">
 				<EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>
 			</DoubleAnimationUsingKeyFrames>
 		</Storyboard>
@@ -123,87 +56,200 @@
 		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="Close_Label">
 			<BeginStoryboard x:Name="CloseButton_Off_BeginStoryboard" Storyboard="{StaticResource CloseButton_Off}"/>
 		</EventTrigger>
-		<EventTrigger RoutedEvent="Mouse.MouseEnter" SourceName="RemapButton">
-			<BeginStoryboard x:Name="RemapButton_On_BeginStoryboard" Storyboard="{StaticResource RemapButton_On}"/>
-		</EventTrigger>
-		<EventTrigger RoutedEvent="Mouse.MouseLeave" SourceName="RemapButton">
-			<BeginStoryboard x:Name="RamapButton_Off_BeginStoryboard" Storyboard="{StaticResource RamapButton_Off}"/>
-		</EventTrigger>
 	</Window.Triggers>
 	<Window.Background>
 		<ImageBrush ImageSource="bg2.png"/>
 	</Window.Background>
-    <Grid>
-		<Grid x:Name="DragMe" Height="107.017" VerticalAlignment="Top" Background="White" Opacity="0" MouseLeftButtonDown="DragMe_MouseLeftButtonDown"/>
-		<Grid x:Name="MainControls" HorizontalAlignment="Left" Width="393">
-			<Label x:Name="Durazno_Title" Content="Durazno" Margin="104.5,19.5,0,0" Foreground="#FFB6B6B6" FontFamily="/Durazno;component/Fonts/#Angelina" FontSize="64" VerticalAlignment="Top" HorizontalAlignment="Left" FontWeight="Bold" MouseLeftButtonDown="DragMe_MouseLeftButtonDown"/>
-			<local:XboxButton x:Name="PadSelection" HorizontalAlignment="Left" Height="78.13" Margin="15,15,0,0" VerticalAlignment="Top" Width="78.13" MouseLeftButtonUp="PadSelection_MouseLeftButtonUp" RenderTransformOrigin="0.5,0.5"/>
-			<CheckBox x:Name="ControllerEnabled" Content="Controller Enabled" Margin="20,124,0,0" VerticalAlignment="Top" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="ControllerEnabled_Checked" Unchecked="ControllerEnabled_Unchecked"/>
-			<Grid x:Name="Settings" Margin="20,162,20,54">
-				<CheckBox x:Name="InvertLX" Content="Invert Left Stick X" Margin="4,0,0,181" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Bottom" Checked="InvertLX_Checked" Unchecked="InvertLX_Unchecked"/>
-				<CheckBox x:Name="InvertLY" Content="Invert Left Stick Y" Margin="4,0,0,153" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="InvertLY_Checked" Unchecked="InvertLY_Unchecked"/>
-				<CheckBox x:Name="InvertRX" Content="Invert Right Stick X" Margin="0,0,0,181" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Bottom" Checked="InvertRX_Checked" Unchecked="InvertRX_Unchecked"/>
-				<CheckBox x:Name="InvertRY" Content="Invert Right Stick Y" Margin="0,0,0,153" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Right" Checked="InvertRY_Checked" Unchecked="InvertRY_Unchecked"/>
-				<Slider x:Name="Rumble_Slider" Margin="71.9,69,58,0" Maximum="200" SmallChange="1" LargeChange="10" TickFrequency="50" Value="100" ValueChanged="Rumble_Slider_ValueChanged" VerticalAlignment="Top"/>
-				<Label x:Name="Rumble_Label" Content="Rumble" HorizontalAlignment="Left" Margin="0,63,0,99" Foreground="#FFB6B6B6" FontSize="16" d:LayoutOverrides="Height"/>
-				<Label x:Name="Rumble_Value" Content="100%" HorizontalAlignment="Right" Margin="0,63,0,99" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" d:LayoutOverrides="Height"/>
-				<Slider x:Name="Deadzone_Slider" Margin="92.9,0,58,82" Maximum="100" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="Deadzone_Slider_ValueChanged" VerticalAlignment="Bottom"/>
-				<Label x:Name="Deadzone_Label" Content="Deadzone" HorizontalAlignment="Left" Margin="0,99,0,76" Foreground="#FFB6B6B6" FontSize="16" d:LayoutOverrides="Height"/>
-				<Label x:Name="Deadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,99,0,76" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" d:LayoutOverrides="Height"/>
-				<Slider x:Name="AntiDeadzone_Slider" Margin="121.723,0,58,44" Maximum="90" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="AntiDeadzone_Slider_ValueChanged" VerticalAlignment="Bottom"/>
-				<Label x:Name="AntiDeadzone_Label" Content="AntiDeadzone" HorizontalAlignment="Left" Margin="0,0,0,38" Foreground="#FFB6B6B6" FontSize="16" VerticalAlignment="Bottom"/>
-				<Label x:Name="AntiDeadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,0,0,38" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" VerticalAlignment="Bottom"/>
-				<Slider x:Name="Linearity_Slider" Margin="80.3,0,58,2" TickPlacement="Both" Maximum="3" Minimum="-3" SmallChange="0.5" VerticalAlignment="Bottom" ValueChanged="Linearity_Slider_ValueChanged"/>
-				<Label x:Name="Linearity_Label" Content="Linearity" HorizontalAlignment="Left" Foreground="#FFB6B6B6" VerticalAlignment="Bottom" FontSize="16"/>
-				<Label x:Name="Linearity_Value" Content="-0.00" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" Margin="0,0,5,0"/>
+	<Grid>
+		<Grid x:Name="DragMe" Background="White" Opacity="0" MouseLeftButtonDown="DragMe_MouseLeftButtonDown"/>
+		<Grid x:Name="MainControls">
+			<Rectangle HorizontalAlignment="Left" Height="80" Margin="90,10,0,0" VerticalAlignment="Top" Width="283" Fill="#FFB6B6B6" MouseLeftButtonDown="DragMe_MouseLeftButtonDown">
+				<Rectangle.OpacityMask>
+					<ImageBrush Stretch="Uniform" ImageSource="TitleMask.png"/>
+				</Rectangle.OpacityMask>
+			</Rectangle>
+			<local:XboxButton x:Name="PadSelection" HorizontalAlignment="Left" Height="80" Margin="10,10,0,0" VerticalAlignment="Top" Width="80" MouseLeftButtonUp="PadSelection_MouseLeftButtonUp" RenderTransformOrigin="0.5,0.5"/>
+			<CheckBox x:Name="ControllerEnabled" Content="Controller Enabled" Margin="24,100,0,0" VerticalAlignment="Top" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="ControllerEnabled_Checked" Unchecked="ControllerEnabled_Unchecked" Indeterminate="ControllerEnabled_Indeterminate" VerticalContentAlignment="Center" IsThreeState="True"/>
+			<Label x:Name="BtnRemap" Content="Remap" HorizontalAlignment="Left" Margin="283,97,0,0" VerticalAlignment="Top" Width="65" FontSize="16" Foreground="#FF2B2B2B" Background="#FFB6B6B6" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1" MouseLeftButtonUp="BtnRemap_MouseLeftButtonUp"/>
+			<Label x:Name="BtnSettings" Content="Settings" HorizontalAlignment="Left" Margin="353,97,0,0" VerticalAlignment="Top" Width="65" FontSize="16" Foreground="#FF2B2B2B" Background="#FFB6B6B6" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1" MouseLeftButtonUp="BtnSettings_MouseLeftButtonUp"/>
+			<Grid x:Name="Settings" Margin="20,134,20,30" >
+				<Grid.RowDefinitions>
+					<RowDefinition Height="8*"/>
+					<RowDefinition Height="8*"/>
+					<RowDefinition Height="40*"/>
+					<RowDefinition Height="30*"/>
+				</Grid.RowDefinitions>
+				<CheckBox x:Name="InvertLX" Content="Inv LS X" Margin="4,0,0,0" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Checked="InvertLX_Checked" Unchecked="InvertLX_Unchecked" VerticalContentAlignment="Center" Height="20" Width="80"/>
+				<CheckBox x:Name="InvertLY" Content="Inv LS Y" Margin="4,0,0,0" VerticalAlignment="Center" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="InvertLY_Checked" Unchecked="InvertLY_Unchecked" VerticalContentAlignment="Center" Height="20" Width="80" Grid.Row="1"/>
+				<CheckBox x:Name="InvertRX" Content="Inv RS X" Margin="97,2,0,2" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" Checked="InvertRX_Checked" Unchecked="InvertRX_Unchecked" VerticalContentAlignment="Center" Height="20" Width="80"/>
+				<CheckBox x:Name="InvertRY" Content="Inv RS Y" Margin="97,2,0,3" VerticalAlignment="Center" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" Checked="InvertRY_Checked" Unchecked="InvertRY_Unchecked" VerticalContentAlignment="Center" Height="20" Width="80" Grid.Row="1"/>
+				<CheckBox x:Name="SeparateSticks" Content="Separate Sticks Settings" Margin="188,2,0,2" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="20" Width="192" Checked="SeparateSticks_Checked" Unchecked="SeparateSticks_Unchecked"/>
+				<CheckBox x:Name="LinearDZ" Content="LinearDZ" Margin="188,2,0,3" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="20" Width="100" Grid.Row="1" Checked="LinearDZ_Checked" Unchecked="LinearDZ_Unchecked"/>
+				<CheckBox x:Name="LinearADZ" Content="LinearADZ" Margin="285,2,0,3" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="20" Width="100" Grid.Row="1" Checked="LinearADZ_Checked" Unchecked="LinearADZ_Unchecked"/>
+				
+				<Grid x:Name="SettingsL" Margin="0" Grid.Row="2">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Slider x:Name="Rumble_Slider" Margin="115,0,58,0" Maximum="200" SmallChange="1" LargeChange="10" TickFrequency="50" Value="100" ValueChanged="Rumble_Slider_ValueChanged" VerticalAlignment="Center" Grid.Row="0" Height="18"/>
+					<Label x:Name="Rumble_Label" Content="Rumble" HorizontalAlignment="Left" Foreground="#FFB6B6B6" FontSize="16" Grid.Row="0" Width="64" VerticalAlignment="Center" Height="31" Margin="0"/>
+					<Label x:Name="Rumble_Value" Content="100%" HorizontalAlignment="Right" FontWeight="Bold" FontSize="16" Foreground="#FFB6B6B6" Grid.Row="0" Width="51" VerticalAlignment="Center" Height="31" Margin="0"/>
+					<Slider x:Name="Deadzone_Slider" Margin="115,0,58,0" Maximum="100" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="Deadzone_Slider_ValueChanged" VerticalAlignment="Center" Height="18" Grid.Row="1"/>
+					<Label x:Name="Deadzone_Label" Content="Deadzone" HorizontalAlignment="Left" Margin="0,4,0,5" Foreground="#FFB6C8B6" FontSize="16" Width="81" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+					<Label x:Name="Deadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0,4,0,5" FontWeight="Bold" FontSize="16" Foreground="#FFB6C8B6" Width="51" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+					<Slider x:Name="AntiDeadzone_Slider" Margin="115,0,58,0" Maximum="90" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="AntiDeadzone_Slider_ValueChanged" VerticalAlignment="Center" Grid.Row="2" Height="18"/>
+					<Label x:Name="AntiDeadzone_Label" Content="AntiDeadzone" HorizontalAlignment="Left" Margin="0" Foreground="#FFB6C8B6" FontSize="16" VerticalAlignment="Center" Grid.Row="2" Height="31" Width="110"/>
+					<Label x:Name="AntiDeadzone_Value" Content="100%" HorizontalAlignment="Right" Margin="0" FontWeight="Bold" FontSize="16" Foreground="#FFB6C8B6" VerticalAlignment="Center" Grid.Row="2" Height="31" Width="51"/>
+					<Slider x:Name="Linearity_Slider" Margin="115,2,58,2" TickPlacement="Both" Maximum="3" Minimum="-3" SmallChange="0.5" VerticalAlignment="Center" ValueChanged="Linearity_Slider_ValueChanged" Grid.Row="3" Height="30"/>
+					<Label x:Name="Linearity_Label" Content="Linearity" HorizontalAlignment="Left" Foreground="#FFB6C8B6" VerticalAlignment="Center" FontSize="16" Grid.Row="3" Height="31" Width="70"/>
+					<Label x:Name="Linearity_Value" Content="-0.00" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="#FFB6C8B6" Margin="0,0,5,0" Grid.Row="3" Height="31" Width="48"/>
+				</Grid>
+				<Grid x:Name="SettingsR" Margin="0" Grid.Row="3">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Slider x:Name="Deadzone_Slider2" Margin="115,0,58,0" Maximum="100" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="Deadzone_Slider2_ValueChanged" VerticalAlignment="Center" Height="18"/>
+					<Label x:Name="Deadzone_Label2" Content="Deadzone" HorizontalAlignment="Left" Margin="0,4,0,5" Foreground="#FFC8B6B6" FontSize="16" Width="81" VerticalAlignment="Center" Height="30"/>
+					<Label x:Name="Deadzone_Value2" Content="100%" HorizontalAlignment="Right" Margin="0,4,0,5" FontWeight="Bold" FontSize="16" Foreground="#FFC8B6B6" Width="51" VerticalAlignment="Center" Height="30"/>
+					<Slider x:Name="AntiDeadzone_Slider2" Margin="115,0,58,0" Maximum="90" SmallChange="1" LargeChange="10" TickFrequency="25" ValueChanged="AntiDeadzone_Slider2_ValueChanged" VerticalAlignment="Center" Grid.Row="1" Height="18"/>
+					<Label x:Name="AntiDeadzone_Label2" Content="AntiDeadzone" HorizontalAlignment="Left" Margin="0" Foreground="#FFC8B6B6" FontSize="16" VerticalAlignment="Center" Grid.Row="1" Height="31" Width="110"/>
+					<Label x:Name="AntiDeadzone_Value2" Content="100%" HorizontalAlignment="Right" Margin="0" FontWeight="Bold" FontSize="16" Foreground="#FFC8B6B6" VerticalAlignment="Center" Grid.Row="1" Height="31" Width="51"/>
+					<Slider x:Name="Linearity_Slider2" Margin="115,2,58,2" TickPlacement="Both" Maximum="3" Minimum="-3" SmallChange="0.5" VerticalAlignment="Center" ValueChanged="Linearity_Slider2_ValueChanged" Grid.Row="2" Height="30"/>
+					<Label x:Name="Linearity_Label2" Content="Linearity" HorizontalAlignment="Left" Foreground="#FFC8B6B6" VerticalAlignment="Center" FontSize="16" Grid.Row="2" Height="31" Width="70"/>
+					<Label x:Name="Linearity_Value2" Content="-0.00" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" FontSize="16" Foreground="#FFC8B6B6" Margin="0,0,5,0" Grid.Row="2" Height="31" Width="48"/>
+				</Grid>
 			</Grid>
 			<Label Content="KrossX's Magical Tools (krossx@live.com)" HorizontalAlignment="Left" Margin="5,0,0,0" VerticalAlignment="Bottom" Foreground="#FFB6B6B6" FontSize="10.667" Opacity="0.25"/>
+			<Label x:Name="BtnTest" Content="Test" HorizontalAlignment="Left" Margin="213,97,0,0" VerticalAlignment="Top" Width="65" FontSize="16" Foreground="#FF2B2B2B" Background="#FFB6B6B6" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1" MouseLeftButtonUp="BtnTest_MouseLeftButtonUp"/>
 		</Grid>
-		<Grid x:Name="RemapControls" Margin="396,0,0,0" Opacity="0">
-			<Grid x:Name="Dpad" HorizontalAlignment="Left" Margin="8,0,0,53.24" Width="155.21" Height="78.5" VerticalAlignment="Bottom">
+		<Grid x:Name="RemapControls" Margin="20,134,20,30" Visibility="Collapsed">
+			<Grid x:Name="Dpad" HorizontalAlignment="Left" Margin="10,0,0,5" VerticalAlignment="Bottom">
 				<local:Remap_Sel_Button x:Name="R_Dpad_Up" Margin="40,0,40.605,0" d:LayoutOverrides="Height" VerticalAlignment="Top" Background="#FFCCCCCC"/>
 				<local:Remap_Sel_Button x:Name="R_Dpad_Down" Margin="40,0,40.605,0" Background="#FFCCCCCC" d:LayoutOverrides="Height" VerticalAlignment="Bottom"/>
 				<local:Remap_Sel_Button x:Name="R_Dpad_Left" HorizontalAlignment="Left" Margin="0,27.5,0,28.5" Background="#FFCCCCCC" d:LayoutOverrides="Width"/>
 				<local:Remap_Sel_Button x:Name="R_Dpad_Right" HorizontalAlignment="Right" Margin="0,27.5,0,28.5" Background="#FFCCCCCC" d:LayoutOverrides="Width"/>
 			</Grid>
-			<Grid x:Name="FaceButtons" Margin="291,172.26,0,174.24" HorizontalAlignment="Left" Width="155.21">
+			<Grid x:Name="FaceButtons" Margin="0,85,10,0" HorizontalAlignment="Right" VerticalAlignment="Top">
 				<local:Remap_Sel_Button x:Name="R_Button_A" Margin="40.605,0,40,0" Background="#FF8EFF6F" d:LayoutOverrides="Height" VerticalAlignment="Bottom"/>
 				<local:Remap_Sel_Button x:Name="R_Button_B" HorizontalAlignment="Right" Margin="0,27.5,0,28.5" Background="#FFFF6565" d:LayoutOverrides="Width"/>
 				<local:Remap_Sel_Button x:Name="R_Button_X" HorizontalAlignment="Left" Margin="0,27.5,0,28.5" Background="#FF8D89FF" d:LayoutOverrides="Width"/>
 				<local:Remap_Sel_Button x:Name="R_Button_Y" Margin="40.605,0,40,0" VerticalAlignment="Top" Background="#FFF8F980" d:LayoutOverrides="Height"/>
 			</Grid>
-			<local:Remap_Sel_Button x:Name="R_Trigger_Left" HorizontalAlignment="Left" Margin="49,40.26,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
-			<local:Remap_Sel_Button x:Name="R_Trigger_Right" HorizontalAlignment="Left" Margin="330.605,40.26,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
-			<local:Remap_Sel_Button x:Name="R_Shoulder_Left" HorizontalAlignment="Left" Margin="49,66.76,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
-			<local:Remap_Sel_Button x:Name="R_Shoulder_Right" HorizontalAlignment="Left" Margin="330.605,66.76,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
-			<local:Remap_Sel_Button x:Name="R_Button_Back" HorizontalAlignment="Left" Margin="88.605,113.26,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
-			<local:Remap_Sel_Button x:Name="R_Button_Start" Margin="291,113.26,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height" HorizontalAlignment="Left"/>
-			<Grid x:Name="RightStick" Height="84.5" Margin="245.395,0,0,47.24" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="200.815">
+			<local:Remap_Sel_Button x:Name="R_Trigger_Left" HorizontalAlignment="Left" Margin="50,5,0,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
+			<local:Remap_Sel_Button x:Name="R_Trigger_Right" HorizontalAlignment="Right" Margin="0,5,50,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
+			<local:Remap_Sel_Button x:Name="R_Shoulder_Left" HorizontalAlignment="Left" Margin="50,32,0,0" VerticalAlignment="Top" Background="#FFCCCCCC"/>
+			<local:Remap_Sel_Button x:Name="R_Shoulder_Right" HorizontalAlignment="Right" Margin="0,32,50,0" VerticalAlignment="Top" Background="#FFCCCCCC" d:LayoutOverrides="Width, Height"/>
+			<local:Remap_Sel_Button x:Name="R_Button_Back" HorizontalAlignment="Center" Margin="116,59,206,0" VerticalAlignment="Top" Background="#FFCCCCCC"/>
+			<local:Remap_Sel_Button x:Name="R_Button_Start" Margin="206,59,116,0" VerticalAlignment="Top" Background="#FFCCCCCC" HorizontalAlignment="Center"/>
+			<Grid x:Name="RightStick" Margin="0,0,10,5" VerticalAlignment="Bottom" HorizontalAlignment="Right">
 				<local:Remap_Sel_Button x:Name="R_RightStick_YP" Margin="85.605,0,40.605,0" VerticalAlignment="Top" Background="Black" d:LayoutOverrides="Height"/>
 				<local:Remap_Sel_Button x:Name="R_RightStick_YM" Margin="85.605,0,40.605,6" Background="Black" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
 				<local:Remap_Sel_Button x:Name="R_RightStick_XM" Margin="45.605,27.5,80.605,34.5" Background="Black"/>
 				<local:Remap_Sel_Button x:Name="R_RightStick_XP" HorizontalAlignment="Right" Margin="0,27.5,0,34.5" Background="Black" d:LayoutOverrides="Width"/>
 				<local:Remap_Sel_Button x:Name="R_RightStick_Button" HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="Black" d:LayoutOverrides="Width, Height"/>
 			</Grid>
-			<Grid x:Name="LeftStick" Margin="8,166.26,0,174.24" HorizontalAlignment="Left" Width="204.21">
+			<Grid x:Name="LeftStick" Margin="10,85,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
 				<local:Remap_Sel_Button x:Name="R_LeftStick_YP" Margin="40,0,89.605,0" VerticalAlignment="Top" Background="Black" d:LayoutOverrides="Height"/>
 				<local:Remap_Sel_Button x:Name="R_LeftStick_YM" Margin="40,0,89.605,6" Background="Black" VerticalAlignment="Bottom" d:LayoutOverrides="Height"/>
-				<local:Remap_Sel_Button x:Name="R_LeftStick_XM" HorizontalAlignment="Left" Margin="0,27.5,0,34.5" Background="Black" d:LayoutOverrides="Width"/>
+				<local:Remap_Sel_Button x:Name="R_LeftStick_XM" HorizontalAlignment="Left" Margin="0,27.5,0,34.5" Background="Black" d:LayoutOverrides="Width" Height="Auto"/>
 				<local:Remap_Sel_Button x:Name="R_LeftStick_XP" Margin="80.605,27.5,49,34.5" Background="Black"/>
 				<local:Remap_Sel_Button x:Name="R_LeftStick_Button" HorizontalAlignment="Right" VerticalAlignment="Bottom" Background="Black" d:LayoutOverrides="Width, Height"/>
 			</Grid>
 		</Grid>
-		<Label x:Name="Close_Label" Content="X" HorizontalAlignment="Right" Margin="0,8,10,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="24" Foreground="#FFB6B6B6" MouseLeftButtonDown="Close_Label_MouseLeftButtonDown"/>
-		<Label x:Name="Version_Label" Content="v0.5" Margin="0,0,10,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="#FFB6B6B6" FontSize="10.667"/>
-		<Rectangle x:Name="RemapButton" Stroke="Black" Fill="#FFB6B6B6" RadiusX="5" RadiusY="5" HorizontalAlignment="Right" Height="36" Margin="0,117,-72.517,0" VerticalAlignment="Top" Width="95" RenderTransformOrigin="0.5,0.5" MouseLeftButtonDown="RemapButton_MouseLeftButtonDown">
-			<Rectangle.RenderTransform>
-				<TransformGroup>
-					<ScaleTransform/>
-					<SkewTransform/>
-					<RotateTransform/>
-					<TranslateTransform/>
-				</TransformGroup>
-			</Rectangle.RenderTransform>
-		</Rectangle>
+		<Grid x:Name="TestControls" Margin="20,134,20,30" Visibility="Collapsed">
+			<Grid.Background>
+				<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+					<GradientStop Color="#33FFFFFF" Offset="1"/>
+					<GradientStop Offset="0.5"/>
+					<GradientStop Color="#33FFFFFF" Offset="0.51"/>
+				</LinearGradientBrush>
+			</Grid.Background>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="1*"/>
+				<RowDefinition Height="1*"/>
+			</Grid.RowDefinitions>
+			<Grid Margin="5,5,273,5">
+				<Rectangle Fill="#19FFFFFF" Stroke="Black"/>
+				<Ellipse Fill="#19FFFFFF" Margin="0"/>
+				<Ellipse x:Name="StickL" Fill="#CC00FF00" HorizontalAlignment="Left" Height="10" Margin="20,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
+				<Ellipse x:Name="StickR" Fill="#CCFF0000" HorizontalAlignment="Left" Height="10" Margin="83,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
+			</Grid>
+			<Rectangle x:Name="TriggerL" HorizontalAlignment="Left" Margin="137,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120">
+				<Rectangle.Fill>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#CCFFFFFF" Offset="0"/>
+						<GradientStop Offset="1" Color="#19FFFFFF"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<Rectangle x:Name="TriggerR" HorizontalAlignment="Left" Margin="179,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120">
+				<Rectangle.Fill>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#CCFFFFFF" Offset="0"/>
+						<GradientStop Offset="1" Color="#19FFFFFF"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<Rectangle x:Name="Button0" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="223,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30"/>
+			<Rectangle x:Name="Button1" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="258,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30"/>
+			<Rectangle x:Name="Button2" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30"/>
+			<Rectangle x:Name="Button3" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30"/>
+			<Rectangle x:Name="Button4" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30"/>
+			<Rectangle x:Name="Button5" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="223,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30"/>
+			<Rectangle x:Name="Button6" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="258,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30"/>
+			<Rectangle x:Name="Button7" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30"/>
+			<Rectangle x:Name="Button8" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30"/>
+			<Rectangle x:Name="Button9" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30"/>
+			<Rectangle x:Name="Button10" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="223,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
+			<Rectangle x:Name="Button11" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="258,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
+			<Rectangle x:Name="Button12" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
+			<Rectangle x:Name="Button13" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
+			<Rectangle x:Name="Button14" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
+
+			<Grid Margin="5,5,273,5" Grid.Row="1">
+				<Rectangle Fill="#19FFFFFF" Stroke="Black"/>
+				<Ellipse Fill="#19FFFFFF" Margin="0"/>
+				<Ellipse x:Name="t_StickL" Fill="#CC00FF00" HorizontalAlignment="Left" Height="10" Margin="20,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
+				<Ellipse x:Name="t_StickR" Fill="#CCFF0000" HorizontalAlignment="Left" Height="10" Margin="83,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
+			</Grid>
+			<Rectangle x:Name="t_TriggerL" HorizontalAlignment="Left" Margin="137,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120" Grid.Row="1">
+				<Rectangle.Fill>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#CCFFFFFF" Offset="0"/>
+						<GradientStop Offset="1" Color="#19FFFFFF"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<Rectangle x:Name="t_TriggerR" HorizontalAlignment="Left" Margin="179,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120" Grid.Row="1">
+				<Rectangle.Fill>
+					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+						<GradientStop Color="#CCFFFFFF" Offset="0"/>
+						<GradientStop Offset="1" Color="#19FFFFFF"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<Rectangle x:Name="t_Button0" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="223,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button1" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="258,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button2" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button3" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button4" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,5,0,0" Stroke="Black" Width="30" VerticalAlignment="Top" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button5" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="223,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button6" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="258,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button7" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button8" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button9" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,50,0,50" Stroke="Black" Width="30" VerticalAlignment="Center" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button10" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="223,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button11" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="258,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button12" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button13" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
+			<Rectangle x:Name="t_Button14" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
+		</Grid>
+		<Label x:Name="Close_Label" Content="X" HorizontalAlignment="Right" Margin="0,1,5,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="28" Foreground="#FFB6B6B6" MouseLeftButtonUp="Close_Label_MouseLeftButtonDown" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+		<Label x:Name="Version_Label" Content="v0.5" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="#FFB6B6B6" FontSize="10.667"/>
 	</Grid>
 </Window>

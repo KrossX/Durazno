@@ -17,14 +17,6 @@
 
 #pragma once
 
-enum GAMEPAD_AXES
-{
-	GP_AXIS_LX,
-	GP_AXIS_LY,
-	GP_AXIS_RX,
-	GP_AXIS_RY
-};
-
 enum REMAP_TYPE
 {
 	RT_DIGITAL_DIGITAL,
@@ -40,7 +32,7 @@ enum REMAP_TYPE
 	RT_ANALOG_ANALOG
 };
 
-struct _Gamepad
+struct GAMEPAD
 {
 	u16 buttons;
 	u8 triggerL, triggerR;
@@ -48,28 +40,38 @@ struct _Gamepad
 	s32 analogRX, analogRY;
 };
 
-struct _Remap
+struct REMAP
 {
 	u8 type;
-	u8 control;	
+	u8 control;
 };
 
-class _Settings
+struct STICK
+{
+	bool invertedX, invertedY;
+	f64 linearity, deadzone, antiDeadzone;
+
+	STICK();
+};
+
+class SETTINGS
 {
 public:
-	_Settings();
+	SETTINGS();
 
 public:
 	u8 port;
+	bool linearDZ, linearADZ;
 	bool isDisabled, isDummy;
-	f64 deadzone, antiDeadzone, rumble;
-	bool axisInverted[4];
-	f64 linearity;
+	
 	u8 triggerMin, triggerMax;
 	
-	_Remap remap[24];
+	f64 rumble;
+	STICK stickL, stickR;
+	
+	REMAP remap[24];
 	
 private:
-	_Settings(const _Settings &);
-	_Settings& operator=(const _Settings &);
+	SETTINGS(const SETTINGS &);
+	SETTINGS& operator=(const SETTINGS &);
 };

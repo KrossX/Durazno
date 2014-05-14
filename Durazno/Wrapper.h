@@ -18,6 +18,15 @@ enum XINPUT_FUNCTIONS
 	XInputTotal
 };
 
+// I don't wanna install DirectX SDK...
+#ifndef XINPUT_BATTERY_INFORMATION
+#define XINPUT_BATTERY_INFORMATION void
+#endif
+
+#ifndef XINPUT_KEYSTROKE
+#define XINPUT_KEYSTROKE void
+#endif
+
 typedef DWORD (WINAPI* t_XInputGetState)(DWORD dwUserIndex, XINPUT_STATE* pState);
 typedef DWORD (WINAPI* t_XInputSetState)(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
 typedef DWORD (WINAPI* t_XInputGetCapabilities)(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities);

@@ -17,5 +17,6 @@
 
 #pragma once
 
-void INI_LoadSettings();
-void INI_SaveSettings();
+void INI_LoadSettings(SETTINGS *settings);
+void INI_SaveSettings(SETTINGS *settings);
+void INI_ReloadSettings();

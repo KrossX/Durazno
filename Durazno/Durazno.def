@@ -17,3 +17,6 @@ EXPORTS
 		XInputPowerOffController @103
 
 		GetControllerInput
+		DuraznoGetState
+		DuraznoGetStateEx
+		INI_ReloadSettings

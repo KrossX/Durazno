@@ -34,6 +34,8 @@ namespace DuraznoGUI
 		const string INIfilename = ".\\Durazno.INI";
 		int INIversion;
 
+		const double FACTOR = 10.0;
+
 		public INIsettings(MainWindow mWin, int version)
 		{
 			mainWindow = mWin;
@@ -45,7 +47,7 @@ namespace DuraznoGUI
 			string valueString = "";
 
 			for (int i = 0; i < 24; i++)
-				valueString += string.Format("{0:00}", mainWindow.RemapSet[port, i]) + (i == 23 ? "" : " ");
+				valueString += string.Format("{0:00}", mainWindow.settings[port].remap[i]) + (i == 23 ? "" : " ");
 			
 			return WritePrivateProfileString("Controller" + port, "Remap", valueString, INIfilename) != 0 ? true : false;
 		}
@@ -65,7 +67,7 @@ namespace DuraznoGUI
 			if (nSize > 70) for (int i = 0; i < 24; i++)
 			{
 				int value = int.Parse(strBuilder.ToString().Substring(i * 3, 2));
-				mainWindow.RemapSet[port, i] = value;
+				mainWindow.settings[port].remap[i] = value;
 			}
 		}
 
@@ -84,27 +86,64 @@ namespace DuraznoGUI
 
 		public void LoadSettings()
 		{
+			mainWindow.settings[0].port = 0;
+			mainWindow.settings[1].port = 1;
+			mainWindow.settings[2].port = 2;
+			mainWindow.settings[3].port = 3;
+
 			if (ReadEntry("General", "INIversion") != INIversion) return;
-			
+
 			for (int port = 0; port < 4; port++)
 			{
-				mainWindow.isEnabled[port] = ReadEntry("Controller" + port, "Disable") == 1 ? false : true;
+				SETTINGS set = mainWindow.settings[port];
 
-				mainWindow.invertedAxis[port, 0] = ReadEntry("Controller" + port, "AxisInvertedLX") == 1 ? true : false;
-				mainWindow.invertedAxis[port, 1] = ReadEntry("Controller" + port, "AxisInvertedLY") == 1 ? true : false;
-				mainWindow.invertedAxis[port, 2] = ReadEntry("Controller" + port, "AxisInvertedRX") == 1 ? true : false;
-				mainWindow.invertedAxis[port, 3] = ReadEntry("Controller" + port, "AxisInvertedRY") == 1 ? true : false;
+				set.port = ReadEntry("Controller" + port, "Port") % 4;
+				set.isDisabled = ReadEntry("Controller" + port, "Disable") == 1;
+				set.isDummy = ReadEntry("Controller" + port, "Dummy") == 1;
+				set.linearDZ  = ReadEntry("Controller" + port, "LinearDZ") == 1;
+				set.linearADZ = ReadEntry("Controller" + port, "LinearADZ") == 1;
 
-				mainWindow.linearity[port] = ReadEntry("Controller" + port, "Linearity");
-				mainWindow.linearity[port] = mainWindow.linearity[port] < 0 ? 0 : mainWindow.linearity[port] / 10.0 - 3.0;
+				set.invertedAxis[0] = ReadEntry("Controller" + port, "AxisInvertedLX") == 1;
+				set.invertedAxis[1] = ReadEntry("Controller" + port, "AxisInvertedLY") == 1;
+				set.invertedAxis[2] = ReadEntry("Controller" + port, "AxisInvertedRX") == 1;
+				set.invertedAxis[3] = ReadEntry("Controller" + port, "AxisInvertedRY") == 1;
 
-				mainWindow.deadzone[port] = ReadEntry("Controller" + port, "Deadzone");
-				mainWindow.antiDeadzone[port] = ReadEntry("Controller" + port, "AntiDeadzone");
-				mainWindow.rumble[port] = ReadEntry("Controller" + port, "Rumble");
+				set.triggerMin = ReadEntry("Controller" + port, "TriggerMin") & 0xFF;
+				set.triggerMax = ReadEntry("Controller" + port, "TriggerMax") & 0xFF;
 
-				if (mainWindow.deadzone[port] < 0) mainWindow.deadzone[port] = 0.0;
-				if (mainWindow.antiDeadzone[port] < 0) mainWindow.antiDeadzone[port] = 0.0;
-				if (mainWindow.rumble[port] < 0) mainWindow.rumble[port] = 100.0;
+				set.rumble = ReadEntry("Controller" + port, "Rumble") / FACTOR;
+
+				int l_linearity, l_deadzone, l_antideadzone;
+				int r_linearity, r_deadzone, r_antideadzone;
+				
+				l_linearity = ReadEntry("Controller" + port, "L_Linearity");
+				l_deadzone = ReadEntry("Controller" + port, "L_Deadzone");
+				l_antideadzone = ReadEntry("Controller" + port, "L_AntiDeadzone");
+
+				r_linearity = ReadEntry("Controller" + port, "R_Linearity");
+				r_deadzone = ReadEntry("Controller" + port, "R_Deadzone");
+				r_antideadzone = ReadEntry("Controller" + port, "R_AntiDeadzone");
+				
+				set.stickL.linearity = l_linearity < 0 ? 0 : (l_linearity - 300) / 100.0;
+				set.stickL.deadzone = l_deadzone / FACTOR;
+				set.stickL.antiDeadzone = l_antideadzone / FACTOR;
+
+				set.stickR.linearity = r_linearity < 0 ? 0 : (r_linearity - 300) / 100.0;
+				set.stickR.deadzone = r_deadzone / FACTOR;
+				set.stickR.antiDeadzone = r_antideadzone / FACTOR;
+
+				if (l_linearity == r_linearity &&
+					l_deadzone == r_deadzone &&
+					l_antideadzone == r_antideadzone)
+					set.perStick = false;
+				else
+					set.perStick = true;
+
+				if (set.rumble < 0) set.rumble = 100.0;
+				if (set.stickL.deadzone < 0) set.stickL.deadzone = 0.0;
+				if (set.stickL.antiDeadzone < 0) set.stickL.antiDeadzone = 0.0;
+				if (set.stickR.deadzone < 0) set.stickR.deadzone = 0.0;
+				if (set.stickR.antiDeadzone < 0) set.stickR.antiDeadzone = 0.0;
 
 				ReadRemapString(port);
 			}
@@ -116,17 +155,40 @@ namespace DuraznoGUI
 			
 			for (int port = 0; port < 4; port++)
 			{
-				SaveEntry("Controller" + port, "Disable", mainWindow.isEnabled[port] ? 0 : 1);
+				SETTINGS set = mainWindow.settings[port];
 
-				SaveEntry("Controller" + port, "AxisInvertedLX", mainWindow.invertedAxis[port, 0] ? 1 : 0);
-				SaveEntry("Controller" + port, "AxisInvertedLY", mainWindow.invertedAxis[port, 1] ? 1 : 0);
-				SaveEntry("Controller" + port, "AxisInvertedRX", mainWindow.invertedAxis[port, 2] ? 1 : 0);
-				SaveEntry("Controller" + port, "AxisInvertedRY", mainWindow.invertedAxis[port, 3] ? 1 : 0);
+				SaveEntry("Controller" + port, "Port", set.port);
+				SaveEntry("Controller" + port, "Disable", set.isDisabled ? 1 : 0);
+				SaveEntry("Controller" + port, "Dummy", set.isDummy ? 1 : 0);
+				SaveEntry("Controller" + port, "LinearDZ", set.linearDZ ? 1 : 0);
+				SaveEntry("Controller" + port, "LinearADZ", set.linearADZ ? 1 : 0);
 
-				SaveEntry("Controller" + port, "Linearity", (int)(mainWindow.linearity[port]*10 + 30));
-				SaveEntry("Controller" + port, "Deadzone", (int)mainWindow.deadzone[port]);
-				SaveEntry("Controller" + port, "AntiDeadzone", (int)mainWindow.antiDeadzone[port]);
-				SaveEntry("Controller" + port, "Rumble", (int)mainWindow.rumble[port]);
+				SaveEntry("Controller" + port, "AxisInvertedLX", set.invertedAxis[0] ? 1 : 0);
+				SaveEntry("Controller" + port, "AxisInvertedLY", set.invertedAxis[1] ? 1 : 0);
+				SaveEntry("Controller" + port, "AxisInvertedRX", set.invertedAxis[2] ? 1 : 0);
+				SaveEntry("Controller" + port, "AxisInvertedRY", set.invertedAxis[3] ? 1 : 0);
+
+				SaveEntry("Controller" + port, "TriggerMin", set.triggerMin);
+				SaveEntry("Controller" + port, "TriggerMax", set.triggerMax);
+
+				SaveEntry("Controller" + port, "Rumble", (int)(set.rumble * FACTOR));
+
+				SaveEntry("Controller" + port, "L_Linearity", (int)(set.stickL.linearity * 100.0) + 300);
+				SaveEntry("Controller" + port, "L_Deadzone", (int)(set.stickL.deadzone * FACTOR));
+				SaveEntry("Controller" + port, "L_AntiDeadzone", (int)(set.stickL.antiDeadzone * FACTOR));
+
+				if (set.perStick)
+				{
+					SaveEntry("Controller" + port, "R_Linearity", (int)(set.stickR.linearity * 100.0) + 300);
+					SaveEntry("Controller" + port, "R_Deadzone", (int)(set.stickR.deadzone * FACTOR));
+					SaveEntry("Controller" + port, "R_AntiDeadzone", (int)(set.stickR.antiDeadzone * FACTOR));
+				}
+				else
+				{
+					SaveEntry("Controller" + port, "R_Linearity", (int)(set.stickL.linearity * 100.0) + 300);
+					SaveEntry("Controller" + port, "R_Deadzone", (int)(set.stickL.deadzone * FACTOR));
+					SaveEntry("Controller" + port, "R_AntiDeadzone", (int)(set.stickL.antiDeadzone * FACTOR));
+				}
 
 				SaveRemapString(port);
 			}

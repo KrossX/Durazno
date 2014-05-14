@@ -16,8 +16,8 @@
  */
 
 #include "Durazno.h"
-#include "Transform.h"
 #include "Settings.h"
+#include "Transform.h"
 
 #include <math.h>
 
@@ -53,7 +53,38 @@ namespace Gamepad
 	};
 };
 
-extern _Settings settings[4];
+f64 const analogmax = 32767.0; // 40201 real max radius
+
+inline f64 Radius(f64 X, f64 Y)
+{
+	return sqrt(X*X + Y*Y);
+}
+
+inline f64 Deadzone(f64 val, f64 deadzone)
+{
+	f64 value = abs(val);
+
+	if (value <= deadzone)
+	{
+		val = 0;
+	}
+	else
+	{
+		value = (value - deadzone) * analogmax / (analogmax - deadzone);
+		val = val < 0 ? -value : value;
+	}
+
+	return val;
+}
+
+inline f64 AntiDeadzone(f64 val, f64 antideadzone)
+{
+	f64 value = abs(val);
+	value = value * ((analogmax - antideadzone) / analogmax) + antideadzone;
+	val = val < 0 ? -value : value;
+	return val;
+}
+
 
 inline f64 Linearity(f64 radius, f64 linearity)
 {
@@ -61,7 +92,7 @@ inline f64 Linearity(f64 radius, f64 linearity)
 	return pow(radius / 32768.0, exp) * 32768.0;
 }
 
-void __fastcall TriggerRange(u8 &trigger, _Settings &set)
+void __fastcall TriggerRange(u8 &trigger, SETTINGS &set)
 {
 	u8 range = set.triggerMax - set.triggerMin;
 
@@ -74,46 +105,100 @@ void __fastcall TriggerRange(u8 &trigger, _Settings &set)
 	trigger = tg > 255 ? 255 : tg;
 }
 
-void __fastcall TransformAnalog(s16 &X, s16 &Y, _Settings &set, bool leftStick)
+class tPOINT
+{
+	f64 X, Y;
+	f64 r, rX, rY;
+
+
+	void SetPoint(f64 inX, f64 inY)
+	{
+		X = inX;
+		Y = inY;
+
+		r = Radius(X, Y);
+		rX = X / r;
+		rY = Y / r;
+	}
+
+	void SetRadius(f64 inR)
+	{
+		r = inR;
+		X = rX * r;
+		Y = rY * r;
+	}
+
+public:
+	void ApplyLinearity(f64 linearity)
+	{
+		f64 radius = Linearity(r, linearity);
+		SetRadius(radius);
+	}
+
+	void ApplyDeadzone(f64 deadzone, bool linear)
+	{
+		if (linear)
+		{
+			f64 fX = Deadzone(X, deadzone);
+			f64 fY = Deadzone(Y, deadzone);
+			SetPoint(fX, fY);
+		}
+		else
+		{
+			f64 radius = Deadzone(r, deadzone);
+			SetRadius(radius);
+		}
+	}
+
+	void ApplyAntiDeadzone(f64 antideadzone, bool linear)
+	{
+		if (linear)
+		{
+			f64 fX = AntiDeadzone(X, antideadzone);
+			f64 fY = AntiDeadzone(Y, antideadzone);
+			SetPoint(fX, fY);
+		}
+		else
+		{
+			f64 radius = AntiDeadzone(r, antideadzone);
+			SetRadius(radius);
+		}
+	}
+
+	f64 GetX() { return X; }
+	f64 GetY() { return Y; }
+
+	tPOINT(s16 inX, s16 inY)
+	{
+		X = (f64)inX;
+		Y = (f64)inY;
+
+		r = Radius(X, Y);
+		rX = X / r;
+		rY = Y / r;
+	}
+};
+
+void __fastcall TransformAnalog(s16 &X, s16 &Y, SETTINGS &set, bool leftStick)
 {
 	// If input is dead, no need to check or do anything else
 	if((X == 0) && (Y == 0)) return;
 
-	f64 const max = 32767.0; // 40201 real max radius
-	f64 const deadzone = set.deadzone * max;
-	f64 radius = sqrt((f64)X*X + (f64)Y*Y);
+	STICK stick = leftStick ? set.stickL : set.stickR;
+	f64 const deadzone = stick.deadzone * analogmax;
+	f64 const antideadzone = stick.antiDeadzone * analogmax;
 
-	// Input must die, on the dead zone.
-	if(radius <= deadzone) { X = Y = 0; return; }
+	tPOINT point(X, Y);
 
-	f64 rX = X/radius, rY = Y/radius;
+	if (stick.linearity != 0) point.ApplyLinearity(stick.linearity);
+	if (deadzone > 0) point.ApplyDeadzone(deadzone, set.linearDZ);
+	if (antideadzone > 0) point.ApplyAntiDeadzone(antideadzone, set.linearADZ);
 
-	if(set.linearity != 0) radius = Linearity(radius, set.linearity);
-	if(deadzone > 0) radius =  (radius - deadzone) * max / (max - deadzone);
+	f64 fX = stick.invertedX ? point.GetX() * -1.0 : point.GetX();
+	f64 fY = stick.invertedY ? point.GetY() * -1.0 : point.GetY();
 
-	//Antideadzone, inspired by x360ce's setting
-	if(set.antiDeadzone > 0)
-	{
-		const f64 antiDeadzone = max * set.antiDeadzone;
-		radius = radius * ((max - antiDeadzone) / max) + antiDeadzone;
-	}
-
-	f64 dX = rX * radius;
-	f64 dY = rY * radius;
-	
-	if(leftStick)
-	{
-		if(set.axisInverted[GP_AXIS_LX]) dX *= -1;
-		if(set.axisInverted[GP_AXIS_LY]) dY *= -1;
-	}
-	else
-	{
-		if(set.axisInverted[GP_AXIS_RX]) dX *= -1;
-		if(set.axisInverted[GP_AXIS_RY]) dY *= -1;
-	}
-
-	X = s16(dX < -32768 ? -32768 : dX > 32767 ? 32767 : dX);
-	Y = s16(dY < -32768 ? -32768 : dY > 32767 ? 32767 : dY);
+	X = s16(fX < -32767.0 ? -32767 : fX > 32767.0 ? 32767 : fX);
+	Y = s16(fY < -32767.0 ? -32767 : fY > 32767.0 ? 32767 : fY);
 }
 
 inline WORD Clamp(f64 input)
@@ -136,21 +221,21 @@ void __fastcall DummyGetState(XINPUT_STATE* pState)
 	pState->Gamepad.sThumbRY =0;
 }
 
-void __fastcall TransformGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
+void __fastcall TransformGetState(SETTINGS &settings, XINPUT_STATE* pState)
 {
-	TransformAnalog(pState->Gamepad.sThumbLX, pState->Gamepad.sThumbLY, settings[dwUserIndex], true);
-	TransformAnalog(pState->Gamepad.sThumbRX, pState->Gamepad.sThumbRY, settings[dwUserIndex], false);
+	TransformAnalog(pState->Gamepad.sThumbLX, pState->Gamepad.sThumbLY, settings, true);
+	TransformAnalog(pState->Gamepad.sThumbRX, pState->Gamepad.sThumbRY, settings, false);
 
-	TriggerRange(pState->Gamepad.bLeftTrigger,  settings[dwUserIndex]);
-	TriggerRange(pState->Gamepad.bRightTrigger, settings[dwUserIndex]);
+	TriggerRange(pState->Gamepad.bLeftTrigger,  settings);
+	TriggerRange(pState->Gamepad.bRightTrigger, settings);
 
-	TransformRemap(dwUserIndex, pState);
+	TransformRemap(settings.remap, pState);
 }
 
-void __fastcall TransformSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
+void __fastcall TransformSetState(f64 rumble, XINPUT_VIBRATION* pVibration)
 {
-	pVibration->wLeftMotorSpeed = Clamp(pVibration->wLeftMotorSpeed * settings[dwUserIndex].rumble);
-	pVibration->wRightMotorSpeed = Clamp(pVibration->wRightMotorSpeed * settings[dwUserIndex].rumble);
+	pVibration->wLeftMotorSpeed = Clamp(pVibration->wLeftMotorSpeed * rumble);
+	pVibration->wRightMotorSpeed = Clamp(pVibration->wRightMotorSpeed * rumble);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -194,7 +279,7 @@ s32 __fastcall RemapType(s32 value, u8 type)
 	return 0;
 }
 
-s32 __fastcall RemapGetValue(_Remap * remap, XINPUT_GAMEPAD* gamepad)
+s32 __fastcall RemapGetValue(REMAP * remap, XINPUT_GAMEPAD* gamepad)
 {	
 	u8 control = remap->control;
 	u8 type = remap->type;
@@ -280,12 +365,9 @@ s32 __fastcall RemapGetValue(_Remap * remap, XINPUT_GAMEPAD* gamepad)
 	return 0;
 }
 
-u16 __fastcall RemapButtons(DWORD port, XINPUT_GAMEPAD* gamepad)
+u16 __fastcall RemapButtons(REMAP *remap, XINPUT_GAMEPAD* gamepad)
 {
-	_Remap * remap = settings[port].remap;
-	
-	
-	u16 buttonsOut = 0;
+	u16 buttonsOut = gamepad->wButtons & 0x400;
 
 	buttonsOut |= RemapGetValue(&remap[Gamepad::DPAD_UP], gamepad)    << 0;
 	buttonsOut |= RemapGetValue(&remap[Gamepad::DPAD_DOWN], gamepad)  << 1;
@@ -309,12 +391,11 @@ u16 __fastcall RemapButtons(DWORD port, XINPUT_GAMEPAD* gamepad)
 	return buttonsOut;
 }
 
-void __fastcall TransformRemap(DWORD dwUserIndex, XINPUT_STATE* pState)
+void __fastcall TransformRemap(REMAP *remap, XINPUT_STATE* pState)
 {
-	_Gamepad gamepad;
-	_Remap * remap = settings[dwUserIndex].remap;
-		
-	gamepad.buttons = RemapButtons(dwUserIndex, &pState->Gamepad);
+	GAMEPAD gamepad;
+
+	gamepad.buttons = RemapButtons(remap, &pState->Gamepad);
 
 	gamepad.triggerL = RemapGetValue(&remap[Gamepad::LEFT_TRIGGER], &pState->Gamepad);
 	gamepad.triggerR = RemapGetValue(&remap[Gamepad::RIGHT_TRIGGER], &pState->Gamepad);

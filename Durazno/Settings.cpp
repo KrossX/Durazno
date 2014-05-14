@@ -18,23 +18,25 @@
 #include "TypeDefs.h"
 #include "Settings.h"
 
-_Settings::_Settings()
+STICK::STICK():
+	invertedX(false),
+	invertedY(false),
+	deadzone(0.0),
+	antiDeadzone(0.0),
+	linearity(0.0)
 {
-	port = 0;
-	isDisabled = false;
-	isDummy = false;
-	deadzone = 0.0;
-	antiDeadzone = 0.0;
-	rumble = 1.0;
-	linearity = 0;
-	triggerMin = 0;
-	triggerMax = 255;
-	
-	for(s16 i = 0; i < 4; i++)
-	{
-		axisInverted[i] = false;
-	}
+}
 
+SETTINGS::SETTINGS():
+	port(0),
+	isDisabled(false),
+	isDummy(false),
+	linearDZ(false),
+	linearADZ(false),
+	rumble(0.0),
+	triggerMin(0),
+	triggerMax(255)
+{
 	for (int i = 0; i < 24; i++)
 	{
 		remap[i].control = i;

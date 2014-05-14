@@ -18,6 +18,6 @@
 #pragma once
 
 void __fastcall DummyGetState(XINPUT_STATE* pState);
-void __fastcall TransformGetState(DWORD dwUserIndex, XINPUT_STATE* pState);
-void __fastcall TransformRemap(DWORD dwUserIndex, XINPUT_STATE* pState);
-void __fastcall TransformSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration);
+void __fastcall TransformGetState(SETTINGS &settings, XINPUT_STATE* pState);
+void __fastcall TransformRemap(REMAP *remap, XINPUT_STATE* pState);
+void __fastcall TransformSetState(f64 rumble, XINPUT_VIBRATION* pVibration);

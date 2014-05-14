@@ -10,9 +10,9 @@
 
 #include "Durazno.h"
 #include "Wrapper.h"
+#include "Settings.h"
 #include "Transform.h"
 #include "FileIO.h"
-#include "Settings.h"
 #include <string>
 
 CRITICAL_SECTION cs;
@@ -21,8 +21,8 @@ HINSTANCE realXInput = NULL;
 
 FARPROC XInput[XInputTotal];
 
-_Settings settings[4];
-s32 INIversion = 2; // INI version stuff
+SETTINGS settings[4];
+s32 INIversion = 3; // INI version stuff
 std::wstring customDLL; // Custom DLL to load first
 
 static bool LoadCustomDLL()
@@ -87,8 +87,8 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 			InitializeCriticalSection(&cs);
 			EnterCriticalSection(&cs);
 
-			INI_LoadSettings();
-			INI_SaveSettings();
+			INI_LoadSettings(settings);
+			INI_SaveSettings(settings);
 			
 			g_hinstDLL =  hinstDLL;
 
@@ -123,19 +123,18 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	
-	u8 index = (u8)dwUserIndex;
-	dwUserIndex = settings[index].isDummy ? 0 : settings[index].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	DWORD ret = ((t_XInputGetState)XInput[GetState])(dwUserIndex, pState);
 
 	if(ret == ERROR_SUCCESS)
 	{
-		if(settings[index].isDummy)
+		if(set.isDummy)
 			DummyGetState(pState);
 		else
-			TransformGetState(dwUserIndex, pState);
+			TransformGetState(set, pState);
 	}
 
 	return ret;
@@ -146,22 +145,26 @@ DWORD DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	return ((t_XInputGetState)XInput[GetState])(dwUserIndex, pState);
 }
 
+DWORD DuraznoGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
+{
+	return ((t_XInputGetStateEx)XInput[GetStateEx])(dwUserIndex, pState);
+}
+
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-
-	u8 index = (u8)dwUserIndex;
-	dwUserIndex = settings[index].isDummy ? 0 : settings[index].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	DWORD ret;
 
-	if(settings[index].isDummy)
+	if(set.isDummy)
 	{
 		ret = ERROR_SUCCESS;
 	}
 	else
 	{
-		TransformSetState(dwUserIndex, pVibration);
+		TransformSetState(set.rumble, pVibration);
 		ret = ((t_XInputSetState)XInput[SetState])(dwUserIndex, pVibration);
 	}
 	
@@ -170,8 +173,9 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputGetCapabilities)XInput[GetCapabilities])(dwUserIndex, dwFlags, pCapabilities);
 }
@@ -183,24 +187,27 @@ extern "C" VOID WINAPI XInputEnable(BOOL enable)
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputGetDSoundAudioDeviceGuids)XInput[GetDSoundAudioDeviceGuids])(dwUserIndex, pDSoundRenderGuid, pDSoundCaptureGuid);
 }
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputGetBatteryInformation)XInput[GetBatteryInformation])(dwUserIndex, devType, pBatteryInformation);
 }
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputGetKeystroke)XInput[GetKeystroke])(dwUserIndex, dwReserved, pKeystroke);
 }
@@ -209,20 +216,18 @@ extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, 
 
 extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
-
-	u8 index = (u8)dwUserIndex;
-	dwUserIndex = settings[index].isDummy ? 0 : settings[index].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	DWORD ret = ((t_XInputGetStateEx)XInput[GetStateEx])(dwUserIndex, pState);
 
 	if(ret == ERROR_SUCCESS)
 	{
-		if(settings[index].isDummy)
+		if(set.isDummy)
 			DummyGetState(pState);
 		else
-			TransformGetState(dwUserIndex, pState);
+			TransformGetState(set, pState);
 	}
 
 	return ret;
@@ -230,24 +235,27 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 
 extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputWaitForGuideButton)XInput[WaitForGuideButton])(dwUserIndex, dwFlag, pVoid);
 }
 
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputCancelGuideButtonWait)XInput[CancelGuideButtonWait])(dwUserIndex);
 }
 
 extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
-	if(settings[dwUserIndex].isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
-	dwUserIndex = settings[dwUserIndex].isDummy ? 0 : settings[dwUserIndex].port;
+	SETTINGS &set = settings[dwUserIndex];
+	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
+	dwUserIndex = set.isDummy ? 0 : set.port;
 	
 	return ((t_XInputPowerOffController)XInput[PowerOffController])(dwUserIndex);
 }
