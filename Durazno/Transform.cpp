@@ -170,6 +170,16 @@ public:
 		}
 	}
 
+	bool inDeadzone(f64 deadzone, bool linear)
+	{
+		if (linear)
+		{
+			if (abs(X) > deadzone || abs(Y) > deadzone) return false;
+		}
+		else if (r > deadzone) return false;
+		return true;
+	}
+
 	f64 GetX() { return X; }
 	f64 GetY() { return Y; }
 
@@ -196,7 +206,10 @@ void __fastcall TransformAnalog(s16 &X, s16 &Y, SETTINGS &set, bool leftStick)
 	tPOINT point(X, Y);
 
 	if (stick.linearity != 0) point.ApplyLinearity(stick.linearity);
-	if (deadzone > 0) point.ApplyDeadzone(deadzone, set.linearDZ);
+	if (deadzone > 0) {
+		if (point.inDeadzone(deadzone, set.linearDZ)) { X = 0; Y = 0; return; }
+		else point.ApplyDeadzone(deadzone, set.linearDZ);
+	}
 	if (antideadzone > 0) point.ApplyAntiDeadzone(antideadzone, set.linearADZ);
 
 	f64 fX = stick.invertedX ? point.GetX() * -1.0 : point.GetX();
