@@ -80,8 +80,13 @@ inline f64 Deadzone(f64 val, f64 deadzone)
 inline f64 AntiDeadzone(f64 val, f64 antideadzone)
 {
 	f64 value = abs(val);
-	value = value * ((analogmax - antideadzone) / analogmax) + antideadzone;
-	val = val < 0 ? -value : value;
+
+	if (val >(1.0 / 65535.0))
+	{
+		value = value * ((analogmax - antideadzone) / analogmax) + antideadzone;
+		val = val < 0 ? -value : value;
+	}
+
 	return val;
 }
 
