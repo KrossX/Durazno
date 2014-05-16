@@ -167,6 +167,7 @@ public:
 
 	f64 GetX() { return X; }
 	f64 GetY() { return Y; }
+	f64 GetRadius() { return r; }
 
 	tPOINT(s16 inX, s16 inY)
 	{
@@ -190,6 +191,7 @@ void __fastcall TransformAnalog(s16 &X, s16 &Y, SETTINGS &set, bool leftStick)
 
 	tPOINT point(X, Y);
 
+	if (point.GetRadius() < deadzone) { X = Y = 0; return; }
 	if (stick.linearity != 0) point.ApplyLinearity(stick.linearity);
 	if (deadzone > 0) point.ApplyDeadzone(deadzone, set.linearDZ);
 	if (antideadzone > 0) point.ApplyAntiDeadzone(antideadzone, set.linearADZ);
