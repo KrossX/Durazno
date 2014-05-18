@@ -275,6 +275,11 @@ namespace DuraznoGUI
 			Button13.Fill = (buttons & (UInt16)XInputButtons.X) > 0 ? cOn : cOff;
 			Button14.Fill = (buttons & (UInt16)XInputButtons.Y) > 0 ? cOn : cOff;
 
+			TextDebug.Text = state.Gamepad.sThumbLX.ToString() + "\n" + state.Gamepad.sThumbLY.ToString() + "\n" +
+							 state.Gamepad.sThumbRX.ToString() + "\n" + state.Gamepad.sThumbRY.ToString() + "\n" +
+							 state.Gamepad.bLeftTrigger.ToString() + "\n" + state.Gamepad.bRightTrigger.ToString() + "\n" +
+							 state.Gamepad.wButtons.ToString("X4");
+
 			try { XInputGetStateEx(curSet.port, ref state); }
 			catch { }
 
@@ -310,6 +315,11 @@ namespace DuraznoGUI
 			t_Button12.Fill = (buttons & (UInt16)XInputButtons.B) > 0 ? cOn : cOff;
 			t_Button13.Fill = (buttons & (UInt16)XInputButtons.X) > 0 ? cOn : cOff;
 			t_Button14.Fill = (buttons & (UInt16)XInputButtons.Y) > 0 ? cOn : cOff;
+
+			t_TextDebug.Text = state.Gamepad.sThumbLX.ToString() + "\n" + state.Gamepad.sThumbLY.ToString() + "\n" +
+							   state.Gamepad.sThumbRX.ToString() + "\n" + state.Gamepad.sThumbRY.ToString() + "\n" +
+							   state.Gamepad.bLeftTrigger.ToString() + "\n" + state.Gamepad.bRightTrigger.ToString() + "\n" +
+							   state.Gamepad.wButtons.ToString("X4");
 		}
 
 		private void UpdateControls()

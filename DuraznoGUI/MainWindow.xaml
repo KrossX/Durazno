@@ -72,7 +72,7 @@
 			<CheckBox x:Name="ControllerEnabled" Content="Controller Enabled" Margin="24,100,0,0" VerticalAlignment="Top" Foreground="#FFB6B6B6" HorizontalAlignment="Left" FontSize="16" Checked="ControllerEnabled_Checked" Unchecked="ControllerEnabled_Unchecked" Indeterminate="ControllerEnabled_Indeterminate" VerticalContentAlignment="Center" IsThreeState="True"/>
 			<Label x:Name="BtnRemap" Content="Remap" HorizontalAlignment="Left" Margin="283,97,0,0" VerticalAlignment="Top" Width="65" FontSize="16" Foreground="#FF2B2B2B" Background="#FFB6B6B6" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1" MouseLeftButtonUp="BtnRemap_MouseLeftButtonUp"/>
 			<Label x:Name="BtnSettings" Content="Settings" HorizontalAlignment="Left" Margin="353,97,0,0" VerticalAlignment="Top" Width="65" FontSize="16" Foreground="#FF2B2B2B" Background="#FFB6B6B6" BorderBrush="Black" BorderThickness="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1" MouseLeftButtonUp="BtnSettings_MouseLeftButtonUp"/>
-			<Grid x:Name="Settings" Margin="20,134,20,30" >
+			<Grid x:Name="Settings" Margin="20,134,20,30">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="8*"/>
 					<RowDefinition Height="8*"/>
@@ -86,7 +86,7 @@
 				<CheckBox x:Name="SeparateSticks" Content="Separate Sticks Settings" Margin="188,2,0,2" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="20" Width="192" Checked="SeparateSticks_Checked" Unchecked="SeparateSticks_Unchecked"/>
 				<CheckBox x:Name="LinearDZ" Content="LinearDZ" Margin="188,2,0,3" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="20" Width="100" Grid.Row="1" Checked="LinearDZ_Checked" Unchecked="LinearDZ_Unchecked"/>
 				<CheckBox x:Name="LinearADZ" Content="LinearADZ" Margin="285,2,0,3" Foreground="#FFB6B6B6" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="20" Width="100" Grid.Row="1" Checked="LinearADZ_Checked" Unchecked="LinearADZ_Unchecked"/>
-				
+
 				<Grid x:Name="SettingsL" Margin="0" Grid.Row="2">
 					<Grid.RowDefinitions>
 						<RowDefinition/>
@@ -179,7 +179,9 @@
 				<Ellipse x:Name="StickL" Fill="#CC00FF00" HorizontalAlignment="Left" Height="10" Margin="20,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
 				<Ellipse x:Name="StickR" Fill="#CCFF0000" HorizontalAlignment="Left" Height="10" Margin="83,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
 			</Grid>
-			<Rectangle x:Name="TriggerL" HorizontalAlignment="Left" Margin="137,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120">
+			<Rectangle HorizontalAlignment="Left" Margin="130,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120" StrokeThickness="0.5" />
+			<Rectangle HorizontalAlignment="Left" Margin="150,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120" StrokeThickness="0.5" />
+			<Rectangle x:Name="TriggerL" HorizontalAlignment="Left" Margin="130,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120">
 				<Rectangle.Fill>
 					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 						<GradientStop Color="#CCFFFFFF" Offset="0"/>
@@ -187,7 +189,7 @@
 					</LinearGradientBrush>
 				</Rectangle.Fill>
 			</Rectangle>
-			<Rectangle x:Name="TriggerR" HorizontalAlignment="Left" Margin="179,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120">
+			<Rectangle x:Name="TriggerR" HorizontalAlignment="Left" Margin="150,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120">
 				<Rectangle.Fill>
 					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 						<GradientStop Color="#CCFFFFFF" Offset="0"/>
@@ -210,6 +212,7 @@
 			<Rectangle x:Name="Button12" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
 			<Rectangle x:Name="Button13" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
 			<Rectangle x:Name="Button14" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30"/>
+			<TextBlock x:Name="TextDebug" HorizontalAlignment="Left" Margin="173,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="110" Width="45" TextAlignment="Right" Text="-65535" Foreground="#FF959393"/>
 
 			<Grid Margin="5,5,273,5" Grid.Row="1">
 				<Rectangle Fill="#19FFFFFF" Stroke="Black"/>
@@ -217,7 +220,9 @@
 				<Ellipse x:Name="t_StickL" Fill="#CC00FF00" HorizontalAlignment="Left" Height="10" Margin="20,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
 				<Ellipse x:Name="t_StickR" Fill="#CCFF0000" HorizontalAlignment="Left" Height="10" Margin="83,22,0,0" Stroke="Black" VerticalAlignment="Top" Width="10"/>
 			</Grid>
-			<Rectangle x:Name="t_TriggerL" HorizontalAlignment="Left" Margin="137,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120" Grid.Row="1">
+			<Rectangle HorizontalAlignment="Left" Margin="130,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120" StrokeThickness="0.5" Grid.Row="1"/>
+			<Rectangle HorizontalAlignment="Left" Margin="150,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120" StrokeThickness="0.5" Grid.Row="1"/>
+			<Rectangle x:Name="t_TriggerL" HorizontalAlignment="Left" Margin="130,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120" Grid.Row="1">
 				<Rectangle.Fill>
 					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 						<GradientStop Color="#CCFFFFFF" Offset="0"/>
@@ -225,7 +230,7 @@
 					</LinearGradientBrush>
 				</Rectangle.Fill>
 			</Rectangle>
-			<Rectangle x:Name="t_TriggerR" HorizontalAlignment="Left" Margin="179,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="120" Grid.Row="1">
+			<Rectangle x:Name="t_TriggerR" HorizontalAlignment="Left" Margin="150,0,0,5" Stroke="Black" Width="15" VerticalAlignment="Bottom" Height="120" Grid.Row="1">
 				<Rectangle.Fill>
 					<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
 						<GradientStop Color="#CCFFFFFF" Offset="0"/>
@@ -248,6 +253,7 @@
 			<Rectangle x:Name="t_Button12" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="293,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
 			<Rectangle x:Name="t_Button13" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="328,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
 			<Rectangle x:Name="t_Button14" Fill="#19FFFFFF" HorizontalAlignment="Left" Margin="363,0,0,5" Stroke="Black" Width="30" VerticalAlignment="Bottom" Height="30" Grid.Row="1"/>
+			<TextBlock x:Name="t_TextDebug" HorizontalAlignment="Left" Margin="173,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="110" Width="45" TextAlignment="Right" Text="-65535" Foreground="#FF2E2E2E" Grid.Row="1"/>
 		</Grid>
 		<Label x:Name="Close_Label" Content="X" HorizontalAlignment="Right" Margin="0,1,5,0" VerticalAlignment="Top" FontWeight="Bold" FontSize="28" Foreground="#FFB6B6B6" MouseLeftButtonUp="Close_Label_MouseLeftButtonDown" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
 		<Label x:Name="Version_Label" Content="v0.5" Margin="0,0,5,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="#FFB6B6B6" FontSize="10.667"/>
