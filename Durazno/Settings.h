@@ -50,6 +50,10 @@ struct STICK
 {
 	bool invertedX, invertedY;
 	f64 linearity, deadzone, antiDeadzone;
+	f64 dzconst, adzconst;
+	f64 dzcheck, adzcheck;
+
+	void SetConsts();
 
 	STICK();
 };

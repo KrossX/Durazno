@@ -60,7 +60,7 @@ inline f64 Radius(f64 X, f64 Y)
 	return sqrt(X*X + Y*Y);
 }
 
-inline f64 Deadzone(f64 val, f64 deadzone)
+inline f64 Deadzone(f64 val, f64 deadzone, f64 k)
 {
 	f64 value = abs(val);
 
@@ -70,20 +70,22 @@ inline f64 Deadzone(f64 val, f64 deadzone)
 	}
 	else
 	{
-		value = (value - deadzone) * analogmax / (analogmax - deadzone);
+		//value = (value - deadzone) * analogmax / (analogmax - deadzone);
+		value = (value - deadzone) * k;
 		val = val < 0 ? -value : value;
 	}
 
 	return val;
 }
 
-inline f64 AntiDeadzone(f64 val, f64 antideadzone)
+inline f64 AntiDeadzone(f64 val, f64 antideadzone, f64 k)
 {
 	f64 value = abs(val);
 
 	if (value >(1.0 / 65535.0))
 	{
-		value = value * ((analogmax - antideadzone) / analogmax) + antideadzone;
+		//value = value * ((analogmax - antideadzone) / analogmax) + antideadzone;
+		value = value * k + antideadzone;
 		val = val < 0 ? -value : value;
 	}
 
@@ -114,7 +116,7 @@ class tPOINT
 {
 	f64 X, Y;
 	f64 r, rX, rY;
-
+	f64 dzk, adzk;
 
 	void SetPoint(f64 inX, f64 inY)
 	{
@@ -144,13 +146,13 @@ public:
 	{
 		if (linear)
 		{
-			f64 fX = Deadzone(X, deadzone);
-			f64 fY = Deadzone(Y, deadzone);
+			f64 fX = Deadzone(X, deadzone, dzk);
+			f64 fY = Deadzone(Y, deadzone, dzk);
 			SetPoint(fX, fY);
 		}
 		else
 		{
-			f64 radius = Deadzone(r, deadzone);
+			f64 radius = Deadzone(r, deadzone, dzk);
 			SetRadius(radius);
 		}
 	}
@@ -159,13 +161,13 @@ public:
 	{
 		if (linear)
 		{
-			f64 fX = AntiDeadzone(X, antideadzone);
-			f64 fY = AntiDeadzone(Y, antideadzone);
+			f64 fX = AntiDeadzone(X, antideadzone, adzk);
+			f64 fY = AntiDeadzone(Y, antideadzone, adzk);
 			SetPoint(fX, fY);
 		}
 		else
 		{
-			f64 radius = AntiDeadzone(r, antideadzone);
+			f64 radius = AntiDeadzone(r, antideadzone, adzk);
 			SetRadius(radius);
 		}
 	}
@@ -173,7 +175,8 @@ public:
 	f64 GetX() { return X; }
 	f64 GetY() { return Y; }
 
-	tPOINT(s16 inX, s16 inY)
+	tPOINT(s16 inX, s16 inY, f64 dzconst, f64 adzconst):
+		dzk(dzconst), adzk(adzconst)
 	{
 		X = (f64)inX;
 		Y = (f64)inY;
@@ -190,14 +193,11 @@ void __fastcall TransformAnalog(s16 &X, s16 &Y, SETTINGS &set, bool leftStick)
 	if((X == 0) && (Y == 0)) return;
 
 	STICK stick = leftStick ? set.stickL : set.stickR;
-	f64 const deadzone = stick.deadzone * analogmax;
-	f64 const antideadzone = stick.antiDeadzone * analogmax;
-
-	tPOINT point(X, Y);
+	tPOINT point(X, Y, stick.dzconst, stick.adzconst);
 
 	if (stick.linearity != 0) point.ApplyLinearity(stick.linearity);
-	if (deadzone > 0) point.ApplyDeadzone(deadzone, set.linearDZ);
-	if (antideadzone > 0) point.ApplyAntiDeadzone(antideadzone, set.linearADZ);
+	if (stick.dzcheck  > 0) point.ApplyDeadzone(stick.dzcheck, set.linearDZ);
+	if (stick.adzcheck > 0) point.ApplyAntiDeadzone(stick.adzcheck, set.linearADZ);
 
 	f64 fX = stick.invertedX ? point.GetX() * -1.0 : point.GetX();
 	f64 fY = stick.invertedY ? point.GetY() * -1.0 : point.GetY();

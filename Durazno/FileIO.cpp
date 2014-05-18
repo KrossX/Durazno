@@ -237,6 +237,9 @@ void INI_LoadSettings(SETTINGS *settings)
 		result = ReadEntry(L"Controller", port, L"R_AntiDeadzone", filename);
 		if (result != -1) set.stickR.antiDeadzone = result / FACTOR;
 
+		set.stickL.SetConsts();
+		set.stickR.SetConsts();
+
 		ReadRemap(port, filename, settings);
 	}
 }

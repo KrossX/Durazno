@@ -27,6 +27,17 @@ STICK::STICK():
 {
 }
 
+void STICK::SetConsts()
+{
+	f64 const analogmax = 32767.0; // 40201 real max radius
+
+	dzcheck = deadzone * analogmax;
+	adzcheck = antiDeadzone * analogmax;
+
+	dzconst = analogmax / (analogmax - dzcheck);
+	adzconst = (analogmax - adzcheck) / analogmax;
+}
+
 SETTINGS::SETTINGS():
 	port(0),
 	isDisabled(false),
