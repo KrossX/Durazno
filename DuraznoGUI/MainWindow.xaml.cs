@@ -168,7 +168,6 @@ namespace DuraznoGUI
 
 		int curPad = 0;
 		SETTINGS curSet = new SETTINGS();
-		bool testing = false;
 
 		//
 		// From FreewareFire's info (GPLv3)
@@ -223,13 +222,8 @@ namespace DuraznoGUI
 
 			while(true)
 			{
-				if (testing)
-				{
-					System.Threading.Thread.Sleep(41);
-					worker.ReportProgress(50);
-				}
-				else
-					System.Threading.Thread.Sleep(1000);
+				worker.ReportProgress(50);
+				System.Threading.Thread.Sleep(41);
 			}
 		}
 
@@ -241,7 +235,9 @@ namespace DuraznoGUI
 		private void TestUpdate()
 		{
 			XInputState state = new XInputState();
-			DuraznoGetStateEx(curSet.port, ref state);
+
+			try { DuraznoGetStateEx(curSet.port, ref state); }
+			catch { }
 
 			double LX = (state.Gamepad.sThumbLX + 32767) / 65535.0 * 110.0;
 			double LY = (32768 - state.Gamepad.sThumbLY) / 65535.0 * 110.0;
@@ -279,7 +275,8 @@ namespace DuraznoGUI
 			Button13.Fill = (buttons & (UInt16)XInputButtons.X) > 0 ? cOn : cOff;
 			Button14.Fill = (buttons & (UInt16)XInputButtons.Y) > 0 ? cOn : cOff;
 
-			XInputGetStateEx(curSet.port, ref state);
+			try { XInputGetStateEx(curSet.port, ref state); }
+			catch { }
 
 			LX = (state.Gamepad.sThumbLX + 32767) / 65535.0 * 110.0;
 			LY = (32768 - state.Gamepad.sThumbLY) / 65535.0 * 110.0;
@@ -621,8 +618,6 @@ namespace DuraznoGUI
 			BtnSettings.BorderBrush = new SolidColorBrush(Colors.White);
 			BtnRemap.BorderBrush = new SolidColorBrush(Colors.Black);
 			BtnTest.BorderBrush = new SolidColorBrush(Colors.Black);
-
-			testing = false;
 		}
 
 		private void BtnRemap_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -634,8 +629,6 @@ namespace DuraznoGUI
 			BtnSettings.BorderBrush = new SolidColorBrush(Colors.Black);
 			BtnRemap.BorderBrush = new SolidColorBrush(Colors.White);
 			BtnTest.BorderBrush = new SolidColorBrush(Colors.Black);
-
-			testing = false;
 		}
 
 		private void BtnTest_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -650,10 +643,9 @@ namespace DuraznoGUI
 
 			SaveRemap();
 			INIstuff.SaveSettings();
-			INI_ReloadSettings();
 
-			TestUpdate();
-			testing = true;
+			try { INI_ReloadSettings(); }
+			catch { }
 		}
 
 
