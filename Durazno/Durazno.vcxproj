@@ -70,7 +70,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Readme.txt" "$(TargetDir)" /Y</Command>
+      <Command>copy "$(SolutionDir)README" "$(TargetDir)Readme.txt" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -96,7 +96,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Readme.txt" "$(TargetDir)" /Y</Command>
+      <Command>copy "$(SolutionDir)README" "$(TargetDir)Readme.txt" /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -115,7 +115,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Durazno.def" />
-    <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Durazno.rc" />

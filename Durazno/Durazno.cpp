@@ -1,11 +1,5 @@
-/*  Durazno - XInput to XInput Wrapper
- *  - 2012 KrossX
- *	
- *	Content of this file is based on code from 
- *	x360ce http://code.google.com/p/x360ce/
- *
- *  Licenced under GNU Lesser GPL licence.
- *  http://www.gnu.org/licenses/lgpl.html
+/* Copyright (c) 2012 KrossX <krossx@live.com>
+ * License: http://www.opensource.org/licenses/mit-license.html  MIT License
  */
 
 #include "Durazno.h"

@@ -52,9 +52,6 @@
     <None Include="Durazno.def">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Readme.txt">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Durazno.rc">
