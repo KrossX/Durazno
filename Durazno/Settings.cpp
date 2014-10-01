@@ -10,7 +10,9 @@ STICK::STICK():
 	invertedY(false),
 	deadzone(0.0),
 	antiDeadzone(0.0),
-	linearity(0.0)
+	linearity(0.0),
+	dzcheck(0.0),
+	adzcheck(0.0)
 {
 }
 
@@ -31,7 +33,7 @@ SETTINGS::SETTINGS():
 	isDummy(false),
 	linearDZ(false),
 	linearADZ(false),
-	rumble(0.0),
+	rumble(1.0),
 	triggerMin(0),
 	triggerMax(255)
 {
