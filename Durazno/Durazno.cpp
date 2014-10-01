@@ -52,22 +52,23 @@ static void durazno_init()
 	if(!LoadCustomDLL())
 	{
 		WCHAR sysdir[MAX_PATH];
-		WCHAR buffer[MAX_PATH];
 		WCHAR module[MAX_PATH];
 
 		GetSystemDirectory(sysdir, MAX_PATH);
 		GetModuleFileName(g_hinstDLL, module, MAX_PATH);
 
+		std::wstring fullpath(sysdir);
+
 		if(GetLastError() == ERROR_SUCCESS)
 		{
 			std::wstring filename(module);
 			filename = filename.substr(filename.find_last_of(L"\\/")+1);
-			swprintf_s(buffer,L"%s\\%s",sysdir,filename);
+			fullpath.append(L"\\").append(filename);
 		}
 		else
-			swprintf_s(buffer,L"%s\\%s",sysdir,L"xinput1_3.dll");
+			fullpath.append(L"\\").append(L"xinput1_3.dll");
 
-		realXInput = LoadLibrary(buffer);
+		realXInput = LoadLibrary(fullpath.c_str());
 	}
 
 	if (realXInput)
@@ -87,6 +88,8 @@ static void durazno_init()
 	}
 	else
 	{
+		MessageBoxA(NULL, "Could not load XInput DLL", "Durazno Error!", MB_OK | MB_ICONERROR);
+
 		settings[0].isDisabled = true;
 		settings[1].isDisabled = true;
 		settings[2].isDisabled = true;
@@ -125,7 +128,7 @@ inline void check_durazno_init()
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	check_durazno_init();
-	
+
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 
