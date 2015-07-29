@@ -42,6 +42,11 @@ namespace Gamepad
 
 f64 const analogmax = 32767.0; // 40201 real max radius
 
+f64 static inline abs(f64 a)
+{
+	return a < 0 ? -a : a;
+}
+
 inline f64 Radius(f64 X, f64 Y)
 {
 	return sqrt(X*X + Y*Y);
