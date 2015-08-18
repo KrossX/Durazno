@@ -6,7 +6,7 @@
 #include "Settings.h"
 #include "Transform.h"
 
-#include <math.h>
+#include <cmath>
 
 namespace Gamepad
 {
@@ -42,11 +42,6 @@ namespace Gamepad
 
 f64 const analogmax = 32767.0; // 40201 real max radius
 
-f64 static inline abs(f64 a)
-{
-	return a < 0 ? -a : a;
-}
-
 inline f64 Radius(f64 X, f64 Y)
 {
 	return sqrt(X*X + Y*Y);
@@ -54,7 +49,7 @@ inline f64 Radius(f64 X, f64 Y)
 
 inline f64 Deadzone(f64 val, f64 deadzone, f64 k)
 {
-	f64 value = abs(val);
+	f64 value = std::abs(val);
 
 	if (value <= deadzone)
 	{
@@ -72,7 +67,7 @@ inline f64 Deadzone(f64 val, f64 deadzone, f64 k)
 
 inline f64 AntiDeadzone(f64 val, f64 antideadzone, f64 k)
 {
-	f64 value = abs(val);
+	f64 value = std::abs(val);
 
 	if (value >(1.0 / 65535.0))
 	{
