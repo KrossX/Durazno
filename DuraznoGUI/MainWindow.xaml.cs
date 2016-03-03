@@ -147,7 +147,7 @@ namespace DuraznoGUI
 		[DllImport("xinput1_3")]
 		private static extern uint DuraznoGetStateEx(int port, ref XInputState state);
 
-		[DllImport("xinput1_3")]
+		[DllImport("xinput1_3", EntryPoint = "#100")]
 		private static extern uint XInputGetStateEx(int port, ref XInputState state);
 
 		public List<SETTINGS> settings;
