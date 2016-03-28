@@ -4,27 +4,6 @@
 
 #pragma once
 
-enum XINPUT_FUNCTIONS
-{
-	GetState,
-	SetState,
-	GetCapabilities,
-	Enable, 
-	GetDSoundAudioDeviceGuids,
-	GetBatteryInformation,
-	GetKeystroke,
-	GetAudioDeviceIds,
-
-	GetStateEx,
-	WaitForGuideButton,
-	CancelGuideButtonWait,
-	PowerOffController,
-	GetBaseBusInformation,
-	GetCapabilitiesEx,
-
-	XInputTotal
-};
-
 // I don't wanna install DirectX SDK...
 #ifndef XINPUT_BATTERY_INFORMATION
 #define XINPUT_BATTERY_INFORMATION void
@@ -58,3 +37,24 @@ typedef DWORD (WINAPI* t_XInputCancelGuideButtonWait)(DWORD dwUserIndex);
 typedef DWORD (WINAPI* t_XInputPowerOffController)(DWORD dwUserIndex);
 typedef DWORD (WINAPI* t_XInputGetBaseBusInformation)(DWORD dwUserIndex, XINPUT_BUSINFO* pBusinfo);
 typedef DWORD (WINAPI* t_XInputGetCapabilitiesEx)(DWORD dwUnk, DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIESEX* pCapabilitiesEx);
+
+struct XInputStruct
+{
+	HINSTANCE dll;
+
+	t_XInputGetState                  GetState;
+	t_XInputSetState                  SetState;
+	t_XInputGetCapabilities           GetCapabilities;
+	t_XInputEnable                    Enable;
+	t_XInputGetDSoundAudioDeviceGuids GetDSoundAudioDeviceGuids;
+	t_XInputGetBatteryInformation     GetBatteryInformation;
+	t_XInputGetKeystroke              GetKeystroke;
+	t_XInputGetAudioDeviceIds         GetAudioDeviceIds;
+
+	t_XInputGetStateEx            GetStateEx;
+	t_XInputWaitForGuideButton    WaitForGuideButton;
+	t_XInputCancelGuideButtonWait CancelGuideButtonWait;
+	t_XInputPowerOffController    PowerOffController;
+	t_XInputGetBaseBusInformation GetBaseBusInformation;
+	t_XInputGetCapabilitiesEx     GetCapabilitiesEx;
+};

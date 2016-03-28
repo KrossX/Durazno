@@ -7,103 +7,15 @@
 #include "Settings.h"
 #include "Transform.h"
 #include "FileIO.h"
+
 #include <string>
 
-CRITICAL_SECTION cs;
-HINSTANCE g_hinstDLL = NULL;
-HINSTANCE realXInput = NULL;
-
-FARPROC XInput[XInputTotal];
+HINSTANCE hInstance;
+XInputStruct XInput;
 
 SETTINGS settings[4];
 s32 INIversion = 3; // INI version stuff
-std::wstring customDLL; // Custom DLL to load first
-
-bool g_initialized = false;
-
-static bool LoadCustomDLL()
-{
-	realXInput = LoadLibrary(customDLL.c_str());
-	return realXInput != NULL;
-}
-
-static void durazno_shutdown()
-{
-	EnterCriticalSection(&cs);
-
-	if (realXInput)
-	{
-		FreeLibrary(realXInput);
-		realXInput = NULL;
-	}
-
-	LeaveCriticalSection(&cs);
-	DeleteCriticalSection(&cs);
-}
-
-static void durazno_init()
-{
-	if (g_initialized) return;
-	else g_initialized = true;
-
-	INI_LoadSettings(settings);
-	INI_SaveSettings(settings);
-
-	if(!LoadCustomDLL())
-	{
-		WCHAR sysdir[MAX_PATH];
-		WCHAR module[MAX_PATH];
-
-		GetSystemDirectory(sysdir, MAX_PATH);
-		GetModuleFileName(g_hinstDLL, module, MAX_PATH);
-
-		std::wstring fullpath(sysdir);
-
-		if(GetLastError() == ERROR_SUCCESS)
-		{
-			std::wstring filename(module);
-			filename = filename.substr(filename.find_last_of(L"\\/")+1);
-			fullpath.append(L"\\").append(filename);
-		}
-		else
-			fullpath.append(L"\\").append(L"xinput1_3.dll");
-
-		realXInput = LoadLibrary(fullpath.c_str());
-	}
-
-	if (realXInput)
-	{
-		XInput[GetState]                  = GetProcAddress(realXInput, "XInputGetState");
-		XInput[SetState]                  = GetProcAddress(realXInput, "XInputSetState");
-		XInput[GetCapabilities]           = GetProcAddress(realXInput, "XInputGetCapabilities");
-		XInput[Enable]                    = GetProcAddress(realXInput, "XInputEnable");
-		XInput[GetDSoundAudioDeviceGuids] = GetProcAddress(realXInput, "XInputGetDSoundAudioDeviceGuids");
-		XInput[GetBatteryInformation]     = GetProcAddress(realXInput, "XInputGetBatteryInformation");
-		XInput[GetKeystroke]              = GetProcAddress(realXInput, "XInputGetKeystroke");
-		XInput[GetAudioDeviceIds]         = GetProcAddress(realXInput, "XInputGetAudioDeviceIds");
-
-		XInput[GetStateEx]            = GetProcAddress(realXInput, (LPCSTR)100);
-		XInput[WaitForGuideButton]    = GetProcAddress(realXInput, (LPCSTR)101);
-		XInput[CancelGuideButtonWait] = GetProcAddress(realXInput, (LPCSTR)102);
-		XInput[PowerOffController]    = GetProcAddress(realXInput, (LPCSTR)103);
-		XInput[GetBaseBusInformation] = GetProcAddress(realXInput, (LPCSTR)104);
-		XInput[GetCapabilitiesEx]     = GetProcAddress(realXInput, (LPCSTR)108);
-	}
-	else
-	{
-		MessageBoxA(NULL, "Could not load XInput DLL", "Durazno Error!", MB_OK | MB_ICONERROR);
-
-		settings[0].isDisabled = true;
-		settings[1].isDisabled = true;
-		settings[2].isDisabled = true;
-		settings[3].isDisabled = true;
-	}
-
-	//for(int i = 0; i < XInputTotal; i++)
-	//	if(!XInput[i]) return FALSE;
-
-	std::atexit(durazno_shutdown);
-}
+std::wstring customDLL;
 
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
 {
@@ -111,33 +23,83 @@ extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpRe
 
 	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
-		InitializeCriticalSection(&cs);
-		g_hinstDLL =  hinstDLL;
+		hInstance = hinstDLL;
+
+		INI_LoadSettings(settings);
+		INI_SaveSettings(settings);
 	}
 
 	return TRUE;
 }
 
-inline void check_durazno_init()
+void XInputLoadLibrary()
 {
-	if (!g_initialized)
+	if (customDLL.empty())
 	{
-		EnterCriticalSection(&cs);
-		durazno_init();
-		LeaveCriticalSection(&cs);
+		WCHAR sysdir[MAX_PATH];
+		WCHAR module[MAX_PATH];
+
+		GetSystemDirectory(sysdir, MAX_PATH);
+		GetModuleFileName(hInstance, module, MAX_PATH);
+
+		customDLL = std::wstring(sysdir);
+
+		if (GetLastError() == ERROR_SUCCESS)
+		{
+			std::wstring filename(module);
+			filename = filename.substr(filename.find_last_of(L"\\/") + 1);
+			customDLL.append(L"\\").append(filename);
+		}
+		else
+			customDLL.append(L"\\").append(L"xinput1_3.dll");
 	}
+
+	XInput.dll = LoadLibraryW(customDLL.c_str());
+
+	if (XInput.dll == nullptr)
+	{
+		MessageBoxW(NULL, customDLL.c_str(), L"XInput Load Failed!", MB_OK);
+	}
+}
+
+FARPROC XInputGetProc(LPCSTR name)
+{
+	if (XInput.dll == nullptr) XInputLoadLibrary();
+	FARPROC func = GetProcAddress(XInput.dll, name);
+
+	if(func == nullptr)
+		MessageBoxA(NULL, name, "XInput Proc Failed!", MB_OK);
+
+	return func;
+}
+
+extern "C" DWORD WINAPI DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
+{
+	if (XInput.GetState == nullptr)
+		XInput.GetState = (t_XInputGetState)XInputGetProc("XInputGetState");
+
+	return XInput.GetState(dwUserIndex, pState);
+}
+
+extern "C" DWORD WINAPI DuraznoGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
+{
+	if (XInput.GetStateEx == nullptr)
+		XInput.GetStateEx = (t_XInputGetStateEx)XInputGetProc((LPCSTR)100);
+
+	return XInput.GetStateEx(dwUserIndex, pState);
 }
 
 extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
-	DWORD ret = ((t_XInputGetState)XInput[GetState])(dwUserIndex, pState);
+	if (XInput.GetState == nullptr)
+		XInput.GetState = (t_XInputGetState)XInputGetProc("XInputGetState");
+
+	DWORD ret = XInput.GetState(dwUserIndex, pState);
 
 	if(ret == ERROR_SUCCESS)
 	{
@@ -150,26 +112,8 @@ extern "C" DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	return ret;
 }
 
-DWORD DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
-{
-	check_durazno_init();
-	
-	if (!realXInput) return ERROR_DEVICE_NOT_CONNECTED;
-	else return ((t_XInputGetState)XInput[GetState])(dwUserIndex, pState);
-}
-
-DWORD DuraznoGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
-{
-	check_durazno_init();
-
-	if (!realXInput) return ERROR_DEVICE_NOT_CONNECTED;
-	else return ((t_XInputGetStateEx)XInput[GetStateEx])(dwUserIndex, pState);
-}
-
 extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVibration)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
@@ -182,8 +126,11 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 	}
 	else
 	{
+		if (XInput.SetState == nullptr)
+			XInput.SetState = (t_XInputSetState)XInputGetProc("XInputSetState");
+
 		TransformSetState(set.rumble, pVibration);
-		ret = ((t_XInputSetState)XInput[SetState])(dwUserIndex, pVibration);
+		ret = XInput.SetState(dwUserIndex, pVibration);
 	}
 	
 	return ret;
@@ -191,78 +138,84 @@ extern "C" DWORD WINAPI XInputSetState(DWORD dwUserIndex, XINPUT_VIBRATION* pVib
 
 extern "C" DWORD WINAPI XInputGetCapabilities(DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES* pCapabilities)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
+
+	if (XInput.GetCapabilities == nullptr)
+		XInput.GetCapabilities = (t_XInputGetCapabilities)XInputGetProc("XInputGetCapabilities");
 	
-	return ((t_XInputGetCapabilities)XInput[GetCapabilities])(dwUserIndex, dwFlags, pCapabilities);
+	return XInput.GetCapabilities(dwUserIndex, dwFlags, pCapabilities);
 }
 
 extern "C" VOID WINAPI XInputEnable(BOOL enable)
 {
-	check_durazno_init();
+	if (XInput.Enable == nullptr)
+		XInput.Enable = (t_XInputEnable)XInputGetProc("XInputEnable");
 
-	if (realXInput)
-		((t_XInputEnable)XInput[Enable])(enable);
+	XInput.Enable(enable);
 }
 
 extern "C" DWORD WINAPI XInputGetDSoundAudioDeviceGuids(DWORD dwUserIndex, GUID* pDSoundRenderGuid, GUID* pDSoundCaptureGuid)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
+
+	if (XInput.GetDSoundAudioDeviceGuids == nullptr)
+		XInput.GetDSoundAudioDeviceGuids = (t_XInputGetDSoundAudioDeviceGuids)XInputGetProc("XInputGetDSoundAudioDeviceGuids");
 	
-	return ((t_XInputGetDSoundAudioDeviceGuids)XInput[GetDSoundAudioDeviceGuids])(dwUserIndex, pDSoundRenderGuid, pDSoundCaptureGuid);
+	return XInput.GetDSoundAudioDeviceGuids(dwUserIndex, pDSoundRenderGuid, pDSoundCaptureGuid);
 }
 
 extern "C" DWORD WINAPI XInputGetBatteryInformation(DWORD  dwUserIndex, BYTE devType, XINPUT_BATTERY_INFORMATION* pBatteryInformation)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
+
+	if (XInput.GetBatteryInformation == nullptr)
+		XInput.GetBatteryInformation = (t_XInputGetBatteryInformation)XInputGetProc("XInputGetBatteryInformation");
 	
-	return ((t_XInputGetBatteryInformation)XInput[GetBatteryInformation])(dwUserIndex, devType, pBatteryInformation);
+	return XInput.GetBatteryInformation(dwUserIndex, devType, pBatteryInformation);
 }
 
 extern "C" DWORD WINAPI XInputGetKeystroke(DWORD dwUserIndex, DWORD dwReserved, XINPUT_KEYSTROKE* pKeystroke)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
-	
-	return ((t_XInputGetKeystroke)XInput[GetKeystroke])(dwUserIndex, dwReserved, pKeystroke);
+
+	if (XInput.GetKeystroke == nullptr)
+		XInput.GetKeystroke = (t_XInputGetKeystroke)XInputGetProc("XInputGetKeystroke");
+
+	return XInput.GetKeystroke(dwUserIndex, dwReserved, pKeystroke);
 }
 
 extern "C" DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, UINT* pRenderCount, LPWSTR pCaptureDeviceId, UINT* pCaptureCount)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
-	return ((t_XInputGetAudioDeviceIds)XInput[GetKeystroke])(dwUserIndex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
+	if (XInput.GetAudioDeviceIds == nullptr)
+		XInput.GetAudioDeviceIds = (t_XInputGetAudioDeviceIds)XInputGetProc("XInputGetAudioDeviceIds");
+
+	return XInput.GetAudioDeviceIds(dwUserIndex, pRenderDeviceId, pRenderCount, pCaptureDeviceId, pCaptureCount);
 }
 
 // UNDOCUMENTED
 
 extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
-	DWORD ret = ((t_XInputGetStateEx)XInput[GetStateEx])(dwUserIndex, pState);
+	if (XInput.GetStateEx == nullptr)
+		XInput.GetStateEx = (t_XInputGetStateEx)XInputGetProc((LPCSTR)100);
+
+	DWORD ret = XInput.GetStateEx(dwUserIndex, pState);
 
 	if(ret == ERROR_SUCCESS)
 	{
@@ -277,55 +230,60 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 
 extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag, LPVOID pVoid)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
+
+	if (XInput.WaitForGuideButton == nullptr)
+		XInput.WaitForGuideButton = (t_XInputWaitForGuideButton)XInputGetProc((LPCSTR)101);
 	
-	return ((t_XInputWaitForGuideButton)XInput[WaitForGuideButton])(dwUserIndex, dwFlag, pVoid);
+	return XInput.WaitForGuideButton(dwUserIndex, dwFlag, pVoid);
 }
 
 extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
+
+	if (XInput.CancelGuideButtonWait == nullptr)
+		XInput.CancelGuideButtonWait = (t_XInputCancelGuideButtonWait)XInputGetProc((LPCSTR)102);
 	
-	return ((t_XInputCancelGuideButtonWait)XInput[CancelGuideButtonWait])(dwUserIndex);
+	return XInput.CancelGuideButtonWait(dwUserIndex);
 }
 
 extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
+
+	if (XInput.PowerOffController == nullptr)
+		XInput.PowerOffController = (t_XInputPowerOffController)XInputGetProc((LPCSTR)103);
 	
-	return ((t_XInputPowerOffController)XInput[PowerOffController])(dwUserIndex);
+	return XInput.PowerOffController(dwUserIndex);
 }
 
 extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, XINPUT_BUSINFO* pBusinfo)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
-	return ((t_XInputGetBaseBusInformation)XInput[PowerOffController])(dwUserIndex, pBusinfo);
+	if (XInput.GetBaseBusInformation == nullptr)
+		XInput.GetBaseBusInformation = (t_XInputGetBaseBusInformation)XInputGetProc((LPCSTR)104);
+
+	return XInput.GetBaseBusInformation(dwUserIndex, pBusinfo);
 }
 
 extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD dwUnk, DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIESEX* pCapabilitiesEx)
 {
-	check_durazno_init();
-
 	SETTINGS &set = settings[dwUserIndex];
 	if (set.isDisabled) return ERROR_DEVICE_NOT_CONNECTED;
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
-	return ((t_XInputGetCapabilitiesEx)XInput[PowerOffController])(dwUnk, dwUserIndex, dwFlags, pCapabilitiesEx);
+	if (XInput.GetCapabilitiesEx == nullptr)
+		XInput.GetCapabilitiesEx = (t_XInputGetCapabilitiesEx)XInputGetProc((LPCSTR)108);
+
+	return XInput.GetCapabilitiesEx(dwUnk, dwUserIndex, dwFlags, pCapabilitiesEx);
 }

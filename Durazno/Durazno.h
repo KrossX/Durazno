@@ -10,4 +10,4 @@
 
 #include "TypeDefs.h"
 
-DWORD DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState);
+extern "C" DWORD WINAPI DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState);
