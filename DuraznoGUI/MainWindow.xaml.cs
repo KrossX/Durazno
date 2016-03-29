@@ -141,13 +141,13 @@ namespace DuraznoGUI
 
 	public partial class MainWindow : Window
 	{
-		[DllImport("xinput1_3")]
+		[DllImport("xinput1_3.dll")]
 		private static extern void INI_ReloadSettings();
 
-		[DllImport("xinput1_3")]
+		[DllImport("xinput1_3.dll", CallingConvention = CallingConvention.Winapi)]
 		private static extern uint DuraznoGetStateEx(int port, ref XInputState state);
 
-		[DllImport("xinput1_3", EntryPoint = "#100")]
+		[DllImport("xinput1_3.dll", CallingConvention = CallingConvention.Winapi, EntryPoint = "#100")]
 		private static extern uint XInputGetStateEx(int port, ref XInputState state);
 
 		public List<SETTINGS> settings;
