@@ -71,7 +71,7 @@ void ReadRemap(u8 port, wchar_t * filename, SETTINGS settings[4])
 	s32 nSize = GetPrivateProfileString(controller, L"Remap", L"-1", returnvalue, 512, filename);
 	std::wstring value(returnvalue);
 	
-	if(nSize < 70) return;
+	if(nSize != 71) return;
 	
 	for (int i = 0; i < 24; i++)
 	{

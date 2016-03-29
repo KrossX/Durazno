@@ -51,7 +51,7 @@ namespace DuraznoGUI
 
 			int nSize = GetPrivateProfileString("Controller" + port, "Remap", "-1", strBuilder, 512, INIfilename);
 
-			if (nSize > 70) for (int i = 0; i < 24; i++)
+			if (nSize == 71) for (int i = 0; i < 24; i++)
 			{
 				int value = int.Parse(strBuilder.ToString().Substring(i * 3, 2));
 				mainWindow.settings[port].remap[i] = value;
