@@ -52,7 +52,12 @@ bool SaveRemap(u8 port, wchar_t * filename, SETTINGS settings[4])
 	swprintf(controller, 512, L"Controller%d", port);
 		
 	for (int i = 0; i < 24; i++)
-		swprintf(valuestring, 512, i == 0? L"%s%02d" : L"%s %02d", valuestring, settings[port].remap[i].control);
+	{
+		wchar_t temp[512];
+		memcpy_s(temp, 512 * sizeof(wchar_t), valuestring, 512 * sizeof(wchar_t));
+
+		swprintf(valuestring, 512, i == 0 ? L"%s%02d" : L"%s %02d", temp, settings[port].remap[i].control);
+	}
 
 	return WritePrivateProfileString(controller,  L"Remap", valuestring, filename) ? true : false;
 }

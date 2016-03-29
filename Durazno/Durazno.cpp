@@ -9,6 +9,7 @@
 #include "FileIO.h"
 
 #include <string>
+#include <mutex>
 
 HINSTANCE hInstance;
 XInputStruct XInput;
@@ -17,12 +18,44 @@ SETTINGS settings[4];
 s32 INIversion = 3; // INI version stuff
 std::wstring customDLL;
 
+struct logger
+{
+	FILE *file;
+
+	void printl(const char* func, const char* msg)
+	{
+		fprintf(file, "%s: %s\n", func, msg);
+		fflush(file);
+	}
+
+	void printl(const wchar_t* func, const wchar_t* msg)
+	{
+		fwprintf(file, L"%s: %s\n", func, msg);
+		fflush(file);
+	}
+	
+	logger()
+	{
+		fopen_s(&file, ".\\Durazno.log", "w");
+		fprintf_s(file, "= Durazno Log Opened =\n");
+		fflush(file);
+	}
+
+	~logger()
+	{
+		fclose(file);
+	}
+
+} logfile;
+
 extern "C" BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
 {
 	UNREFERENCED_PARAMETER(lpReserved);
 
 	if (fdwReason == DLL_PROCESS_ATTACH)
 	{
+		logfile.printl(__FUNCTION__, "DLL_PROCESS_ATTACH");
+
 		hInstance = hinstDLL;
 
 		INI_LoadSettings(settings);
@@ -55,21 +88,32 @@ void XInputLoadLibrary()
 	}
 
 	XInput.dll = LoadLibraryW(customDLL.c_str());
+	logfile.printl(__FUNCTIONW__, customDLL.c_str());
 
 	if (XInput.dll == nullptr)
 	{
-		MessageBoxW(NULL, customDLL.c_str(), L"XInput Load Failed!", MB_OK);
+		//MessageBoxW(NULL, customDLL.c_str(), L"XInput Load Failed!", MB_OK);
+		logfile.printl(__FUNCTION__, "XInput Load Failed!");
 	}
 }
 
-FARPROC XInputGetProc(LPCSTR name)
+FARPROC XInputGetProc(LPCSTR name, const char* alt = nullptr)
 {
+	static std::mutex load_lock;
+	load_lock.lock();
+
 	if (XInput.dll == nullptr) XInputLoadLibrary();
 	FARPROC func = GetProcAddress(XInput.dll, name);
 
-	if(func == nullptr)
-		MessageBoxA(NULL, name, "XInput Proc Failed!", MB_OK);
+	logfile.printl(__FUNCTION__, alt == nullptr ? name : alt);
 
+	if (func == nullptr)
+	{
+		//MessageBoxA(NULL, name, "XInput Proc Failed!", MB_OK);
+		logfile.printl(__FUNCTION__, "XInput Proc Failed!");
+	}
+
+	load_lock.unlock();
 	return func;
 }
 
@@ -84,7 +128,7 @@ extern "C" DWORD WINAPI DuraznoGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 extern "C" DWORD WINAPI DuraznoGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	if (XInput.GetStateEx == nullptr)
-		XInput.GetStateEx = (t_XInputGetStateEx)XInputGetProc((LPCSTR)100);
+		XInput.GetStateEx = (t_XInputGetStateEx)XInputGetProc((LPCSTR)100, "XInputGetStateEx");
 
 	return XInput.GetStateEx(dwUserIndex, pState);
 }
@@ -213,7 +257,7 @@ extern "C" DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	if (XInput.GetStateEx == nullptr)
-		XInput.GetStateEx = (t_XInputGetStateEx)XInputGetProc((LPCSTR)100);
+		XInput.GetStateEx = (t_XInputGetStateEx)XInputGetProc((LPCSTR)100, __FUNCTION__);
 
 	DWORD ret = XInput.GetStateEx(dwUserIndex, pState);
 
@@ -235,7 +279,7 @@ extern "C" DWORD WINAPI XInputWaitForGuideButton(DWORD dwUserIndex, DWORD dwFlag
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	if (XInput.WaitForGuideButton == nullptr)
-		XInput.WaitForGuideButton = (t_XInputWaitForGuideButton)XInputGetProc((LPCSTR)101);
+		XInput.WaitForGuideButton = (t_XInputWaitForGuideButton)XInputGetProc((LPCSTR)101, __FUNCTION__);
 	
 	return XInput.WaitForGuideButton(dwUserIndex, dwFlag, pVoid);
 }
@@ -247,7 +291,7 @@ extern "C" DWORD WINAPI XInputCancelGuideButtonWait(DWORD dwUserIndex)
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	if (XInput.CancelGuideButtonWait == nullptr)
-		XInput.CancelGuideButtonWait = (t_XInputCancelGuideButtonWait)XInputGetProc((LPCSTR)102);
+		XInput.CancelGuideButtonWait = (t_XInputCancelGuideButtonWait)XInputGetProc((LPCSTR)102, __FUNCTION__);
 	
 	return XInput.CancelGuideButtonWait(dwUserIndex);
 }
@@ -259,7 +303,7 @@ extern "C" DWORD WINAPI XInputPowerOffController(DWORD dwUserIndex)
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	if (XInput.PowerOffController == nullptr)
-		XInput.PowerOffController = (t_XInputPowerOffController)XInputGetProc((LPCSTR)103);
+		XInput.PowerOffController = (t_XInputPowerOffController)XInputGetProc((LPCSTR)103, __FUNCTION__);
 	
 	return XInput.PowerOffController(dwUserIndex);
 }
@@ -271,7 +315,7 @@ extern "C" DWORD WINAPI XInputGetBaseBusInformation(DWORD dwUserIndex, XINPUT_BU
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	if (XInput.GetBaseBusInformation == nullptr)
-		XInput.GetBaseBusInformation = (t_XInputGetBaseBusInformation)XInputGetProc((LPCSTR)104);
+		XInput.GetBaseBusInformation = (t_XInputGetBaseBusInformation)XInputGetProc((LPCSTR)104, __FUNCTION__);
 
 	return XInput.GetBaseBusInformation(dwUserIndex, pBusinfo);
 }
@@ -283,7 +327,7 @@ extern "C" DWORD WINAPI XInputGetCapabilitiesEx(DWORD dwUnk, DWORD dwUserIndex, 
 	dwUserIndex = set.isDummy ? 0 : set.port;
 
 	if (XInput.GetCapabilitiesEx == nullptr)
-		XInput.GetCapabilitiesEx = (t_XInputGetCapabilitiesEx)XInputGetProc((LPCSTR)108);
+		XInput.GetCapabilitiesEx = (t_XInputGetCapabilitiesEx)XInputGetProc((LPCSTR)108, __FUNCTION__);
 
 	return XInput.GetCapabilitiesEx(dwUnk, dwUserIndex, dwFlags, pCapabilitiesEx);
 }
