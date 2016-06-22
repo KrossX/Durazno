@@ -9,7 +9,7 @@
 #include "FileIO.h"
 
 #include <string>
-#include <mutex>
+//#include <mutex>
 
 HINSTANCE hInstance;
 XInputStruct XInput;
@@ -99,8 +99,8 @@ void XInputLoadLibrary()
 
 FARPROC XInputGetProc(LPCSTR name, const char* alt = nullptr)
 {
-	static std::mutex load_lock;
-	load_lock.lock();
+	//static std::mutex load_lock;
+	//load_lock.lock();
 
 	if (XInput.dll == nullptr) XInputLoadLibrary();
 	FARPROC func = GetProcAddress(XInput.dll, name);
@@ -113,7 +113,7 @@ FARPROC XInputGetProc(LPCSTR name, const char* alt = nullptr)
 		logfile.printl(__FUNCTION__, "XInput Proc Failed!");
 	}
 
-	load_lock.unlock();
+	//load_lock.unlock();
 	return func;
 }
 
