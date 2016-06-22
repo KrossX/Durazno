@@ -14,6 +14,9 @@ Description
 Durazno is a XInput to XInput wrapper that simply allows customization when
 using XInput controllers.
 
+Visual Studio 2015 runtimes might be required, get them from here:
+https://www.microsoft.com/en-us/download/details.aspx?id=48145
+
 -------------------------------------------------------------------------------
 Usage
 -------------------------------------------------------------------------------
