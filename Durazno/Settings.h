@@ -33,16 +33,25 @@ struct REMAP
 	u8 control;
 };
 
+struct TRIGGER
+{
+	u8 min = 0;
+	u8 max = 255;
+};
+
 struct STICK
 {
-	bool invertedX, invertedY;
-	f64 linearity, deadzone, antiDeadzone;
+	bool invertedX = false;
+	bool invertedY = false;
+	
+	f64 linearity    = 1.0;
+	f64 deadzone     = 0.0;
+	f64 antiDeadzone = 0.0;
+
+	f64 dzcheck = 0.0;
+	f64 adzcheck = 0.0;
+
 	f64 dzconst, adzconst;
-	f64 dzcheck, adzcheck;
-
-	void SetConsts();
-
-	STICK();
 };
 
 class SETTINGS
@@ -51,18 +60,22 @@ public:
 	SETTINGS();
 
 public:
-	u8 port;
-	bool linearDZ, linearADZ;
-	bool isDisabled, isDummy;
+	u8 port = 0;
+
+	bool linearDZ   = false;
+	bool linearADZ  = false;
+	bool isDisabled = false;
+	bool isDummy    = false;
 	
-	u8 triggerMin, triggerMax;
-	
-	f64 rumble;
+	f64 rumble = 1.0;
+
+	TRIGGER triggerL, triggerR;
 	STICK stickL, stickR;
-	
 	REMAP remap[24];
 	
 private:
 	SETTINGS(const SETTINGS &);
 	SETTINGS& operator=(const SETTINGS &);
 };
+
+void SetStickConsts(STICK &s);

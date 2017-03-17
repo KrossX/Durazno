@@ -5,38 +5,22 @@
 #include "TypeDefs.h"
 #include "Settings.h"
 
-STICK::STICK():
-	invertedX(false),
-	invertedY(false),
-	deadzone(0.0),
-	antiDeadzone(0.0),
-	linearity(0.0),
-	dzcheck(0.0),
-	adzcheck(0.0)
-{
-}
-
-void STICK::SetConsts()
+void SetStickConsts(STICK &s)
 {
 	f64 const analogmax = 32767.0; // 40201 real max radius
 
-	dzcheck = deadzone * analogmax;
-	adzcheck = antiDeadzone * analogmax;
+	s.dzcheck = s.deadzone * analogmax;
+	s.adzcheck = s.antiDeadzone * analogmax;
 
-	dzconst = analogmax / (analogmax - dzcheck);
-	adzconst = (analogmax - adzcheck) / analogmax;
+	s.dzconst = analogmax / (analogmax - s.dzcheck);
+	s.adzconst = (analogmax - s.adzcheck) / analogmax;
 }
 
-SETTINGS::SETTINGS():
-	port(0),
-	isDisabled(false),
-	isDummy(false),
-	linearDZ(false),
-	linearADZ(false),
-	rumble(1.0),
-	triggerMin(0),
-	triggerMax(255)
+SETTINGS::SETTINGS()
 {
+	SetStickConsts(stickL);
+	SetStickConsts(stickR);
+
 	for (int i = 0; i < 24; i++)
 	{
 		remap[i].control = i;

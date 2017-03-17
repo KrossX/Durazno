@@ -86,14 +86,14 @@ inline f64 Linearity(f64 radius, f64 linearity)
 	return pow(radius / 32768.0, exp) * 32768.0;
 }
 
-void __fastcall TriggerRange(u8 &trigger, SETTINGS &set)
+void __fastcall TriggerRange(u8 &trigger, TRIGGER &t)
 {
-	u8 range = set.triggerMax - set.triggerMin;
+	u8 range = t.max - t.min;
 
 	if(!range) return;
 
 	u16 tg = trigger;
-	u8 dz = set.triggerMin;
+	u8 dz = t.min;
 
 	tg = tg <= dz ? 0 : ((tg - dz) * 255) / range;
 	trigger = tg > 255 ? 255 : tg;
@@ -218,8 +218,8 @@ void __fastcall TransformGetState(SETTINGS &settings, XINPUT_STATE* pState)
 	TransformAnalog(pState->Gamepad.sThumbLX, pState->Gamepad.sThumbLY, settings, true);
 	TransformAnalog(pState->Gamepad.sThumbRX, pState->Gamepad.sThumbRY, settings, false);
 
-	TriggerRange(pState->Gamepad.bLeftTrigger,  settings);
-	TriggerRange(pState->Gamepad.bRightTrigger, settings);
+	TriggerRange(pState->Gamepad.bLeftTrigger,  settings.triggerL);
+	TriggerRange(pState->Gamepad.bRightTrigger, settings.triggerR);
 
 	TransformRemap(settings.remap, pState);
 }

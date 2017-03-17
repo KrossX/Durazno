@@ -155,8 +155,11 @@ void INI_SaveSettings(SETTINGS *settings)
 		SaveEntry(L"Controller", port, L"AxisInvertedRX", set.stickR.invertedX ? 1 : 0, filename);
 		SaveEntry(L"Controller", port, L"AxisInvertedRY", set.stickR.invertedY ? 1 : 0, filename);
 
-		SaveEntry(L"Controller", port, L"TriggerMin", set.triggerMin, filename);
-		SaveEntry(L"Controller", port, L"TriggerMax", set.triggerMax, filename);
+		SaveEntry(L"Controller", port, L"L_TriggerMin", set.triggerL.min, filename);
+		SaveEntry(L"Controller", port, L"L_TriggerMax", set.triggerL.max, filename);
+
+		SaveEntry(L"Controller", port, L"R_TriggerMin", set.triggerR.min, filename);
+		SaveEntry(L"Controller", port, L"R_TriggerMax", set.triggerR.max, filename);
 
 		SaveEntry(L"Controller", port, L"Rumble", (s32)(set.rumble * FACTOR), filename);
 
@@ -202,11 +205,17 @@ void INI_LoadSettings(SETTINGS *settings)
 		set.stickR.invertedX = ReadEntry(L"Controller", port, L"AxisInvertedRX", filename) == 1 ? true : false;
 		set.stickR.invertedY = ReadEntry(L"Controller", port, L"AxisInvertedRY", filename) == 1 ? true : false;
 
-		result = ReadEntry(L"Controller", port, L"TriggerMin", filename);
-		if (result != -1) set.triggerMin = result & 0xFF;
+		result = ReadEntry(L"Controller", port, L"L_TriggerMin", filename);
+		if (result != -1) set.triggerL.min = result & 0xFF;
 
-		result = ReadEntry(L"Controller", port, L"TriggerMax", filename);
-		if (result != -1) set.triggerMax = result & 0xFF;
+		result = ReadEntry(L"Controller", port, L"L_TriggerMax", filename);
+		if (result != -1) set.triggerL.max = result & 0xFF;
+
+		result = ReadEntry(L"Controller", port, L"R_TriggerMin", filename);
+		if (result != -1) set.triggerR.min = result & 0xFF;
+
+		result = ReadEntry(L"Controller", port, L"R_TriggerMax", filename);
+		if (result != -1) set.triggerR.max = result & 0xFF;
 
 		result = ReadEntry(L"Controller", port, L"Rumble", filename);
 		if (result != -1) set.rumble = result / FACTOR;
@@ -229,8 +238,8 @@ void INI_LoadSettings(SETTINGS *settings)
 		result = ReadEntry(L"Controller", port, L"R_AntiDeadzone", filename);
 		if (result != -1) set.stickR.antiDeadzone = result / FACTOR;
 
-		set.stickL.SetConsts();
-		set.stickR.SetConsts();
+		SetStickConsts(set.stickL);
+		SetStickConsts(set.stickR);
 
 		ReadRemap(port, filename, settings);
 	}
