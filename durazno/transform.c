@@ -30,7 +30,7 @@ float antideadzone(float value, float antideadzone, float k)
 {
 	float f = 1.0f / 65535.0f;
 
-	if (value > f) // why ?
+	if (value > f) // check for deadzoned value
 	{
 		value = value * k + antideadzone;
 	}
@@ -45,53 +45,66 @@ float antideadzone(float value, float antideadzone, float k)
 static
 void transform_analog(struct stick_settings *set, SHORT *X, SHORT *Y)
 {
+	if (*X == 0 || *Y == 0) return;
+	
 	float x = *X;
 	float y = *Y;
 
-	float length = x*x + y*y;
-	length = Q_rsqrt(length);
-
-	x *= length;
-	y *= length;
-
-	length = (1.0f / length) / ANALOG_MAX;
-
 	if (set->linearity != 0)
 	{
+		float length = Q_rsqrt(x*x + y*y);
+
+		x *= length;
+		y *= length;
+
+		length = 1.0f / length / ANALOG_MAX;
 		length = (float)fastPow(length, set->exp);
+
+		x *= length * ANALOG_MAX;
+		y *= length * ANALOG_MAX;
 	}
 
 	if (set->deadzone > 0)
 	{
-
 		if (set->deadzone_linear)
 		{
-			x = deadzone(x, set->deadzone, set->deadzone_k);
-			y = deadzone(y, set->deadzone, set->deadzone_k);
-			length = 1.0f / Q_rsqrt(x*x + y*y);
+			x = deadzone(x, set->deadzone_check, set->deadzone_k);
+			y = deadzone(y, set->deadzone_check, set->deadzone_k);
 		}
 		else
 		{
-			length = deadzone(length, set->deadzone, set->deadzone_k);
+			float length = Q_rsqrt(x*x + y*y);
+
+			x *= length;
+			y *= length;
+
+			length = deadzone(1.0f / length, set->deadzone_check, set->deadzone_k);
+
+			x *= length;
+			y *= length;
 		}
 	}
 
-	if (set->antideadzone)
+	if (set->antideadzone > 0)
 	{
 		if (set->antideadzone_linear)
 		{
-			x = antideadzone(x, set->antideadzone, set->antideadzone_k);
-			y = antideadzone(y, set->antideadzone, set->antideadzone_k);
-			length = 1.0f / Q_rsqrt(x*x + y*y);
+			x = antideadzone(x, set->antideadzone_check, set->antideadzone_k);
+			y = antideadzone(y, set->antideadzone_check, set->antideadzone_k);
 		}
 		else
 		{
-			length = antideadzone(length, set->antideadzone, set->antideadzone_k);
+			float length = Q_rsqrt(x*x + y*y);
+
+			x *= length;
+			y *= length;
+
+			length = antideadzone(1.0f / length, set->antideadzone_check, set->antideadzone_k);
+
+			x *= length;
+			y *= length;
 		}
 	}
-
-	x *= length * ANALOG_MAX;
-	y *= length * ANALOG_MAX;
 
 	*X = (SHORT)(x < -ANALOG_MAX ? -ANALOG_MAX : x > ANALOG_MAX ? ANALOG_MAX : x);
 	*Y = (SHORT)(y < -ANALOG_MAX ? -ANALOG_MAX : y > ANALOG_MAX ? ANALOG_MAX : y);

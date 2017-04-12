@@ -83,8 +83,11 @@ void set_stick_consts(struct stick_settings *stick)
 	if (stick->linearity < 0) stick->exp  = 1.0f / (-stick->linearity + 1);
 	else                      stick->exp  = stick->linearity + 1.0f;
 
-	stick->deadzone_k = ANALOG_MAX / (ANALOG_MAX - stick->deadzone * ANALOG_MAX);
-	stick->antideadzone_k = (ANALOG_MAX - stick->antideadzone) / ANALOG_MAX;
+	stick->deadzone_check = stick->deadzone * ANALOG_MAX;
+	stick->antideadzone_check = stick->antideadzone * ANALOG_MAX;
+
+	stick->deadzone_k = ANALOG_MAX / (ANALOG_MAX - stick->deadzone_check);
+	stick->antideadzone_k = (ANALOG_MAX - stick->antideadzone_check) / ANALOG_MAX;
 }
 
 static

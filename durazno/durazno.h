@@ -110,6 +110,8 @@ struct stick_settings
 	float exp;
 	float deadzone_k;
 	float antideadzone_k;
+	float deadzone_check;
+	float antideadzone_check;
 	
 	BOOL deadzone_linear;
 	BOOL antideadzone_linear;
