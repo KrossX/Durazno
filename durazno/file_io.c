@@ -4,7 +4,7 @@
  
 #define INI_FILENAME ".\\durazno.ini"
 #define INI_BUFFSIZE 2048
-#define INI_VERSION  3
+#define INI_VERSION  4
 #define INI_FFACTOR  1000.0f
 
 char fileiobuf[INI_BUFFSIZE];
@@ -126,18 +126,18 @@ void ini_load(void)
 		set->rumble_str = GetPrivateProfileIntA(fileiobuf, "Rumble", 1000, INI_FILENAME) / INI_FFACTOR;
 
 		// make linear dz, adz per-stick setting
-		set->stick_l.deadzone_linear     = GetPrivateProfileIntA(fileiobuf, "LinearDZ",       0, INI_FILENAME) == 1;
-		set->stick_l.antideadzone_linear = GetPrivateProfileIntA(fileiobuf, "LinearADZ",      0, INI_FILENAME) == 1;
-		set->stick_l.inverted_x          = GetPrivateProfileIntA(fileiobuf, "AxisInvertedLX", 0, INI_FILENAME) == 1;
-		set->stick_l.inverted_y          = GetPrivateProfileIntA(fileiobuf, "AxisInvertedLY", 0, INI_FILENAME) == 1;
+		set->stick_l.deadzone_linear     = GetPrivateProfileIntA(fileiobuf, "L_LinearDZ",     0, INI_FILENAME) == 1;
+		set->stick_l.antideadzone_linear = GetPrivateProfileIntA(fileiobuf, "L_LinearADZ",    0, INI_FILENAME) == 1;
+		set->stick_l.inverted_x          = GetPrivateProfileIntA(fileiobuf, "L_Inverted_X",   0, INI_FILENAME) == 1;
+		set->stick_l.inverted_y          = GetPrivateProfileIntA(fileiobuf, "L_Inverted_Y",   0, INI_FILENAME) == 1;
 		set->stick_l.linearity           =(GetPrivateProfileIntA(fileiobuf, "L_Linearity",  300, INI_FILENAME) - 300) / 100.0f;
 		set->stick_l.deadzone            = GetPrivateProfileIntA(fileiobuf, "L_Deadzone",     0, INI_FILENAME) / INI_FFACTOR;
 		set->stick_l.antideadzone        = GetPrivateProfileIntA(fileiobuf, "L_AntiDeadzone", 0, INI_FILENAME) / INI_FFACTOR;
 
-		set->stick_r.deadzone_linear     = GetPrivateProfileIntA(fileiobuf, "LinearDZ",       0, INI_FILENAME) == 1;
-		set->stick_r.antideadzone_linear = GetPrivateProfileIntA(fileiobuf, "LinearADZ",      0, INI_FILENAME) == 1;
-		set->stick_r.inverted_x          = GetPrivateProfileIntA(fileiobuf, "AxisInvertedRX", 0, INI_FILENAME) == 1;
-		set->stick_r.inverted_y          = GetPrivateProfileIntA(fileiobuf, "AxisInvertedRY", 0, INI_FILENAME) == 1;
+		set->stick_r.deadzone_linear     = GetPrivateProfileIntA(fileiobuf, "R_LinearDZ",     0, INI_FILENAME) == 1;
+		set->stick_r.antideadzone_linear = GetPrivateProfileIntA(fileiobuf, "R_LinearADZ",    0, INI_FILENAME) == 1;
+		set->stick_r.inverted_x          = GetPrivateProfileIntA(fileiobuf, "R_Inverted_X",   0, INI_FILENAME) == 1;
+		set->stick_r.inverted_y          = GetPrivateProfileIntA(fileiobuf, "R_Inverted_Y",   0, INI_FILENAME) == 1;
 		set->stick_r.linearity           =(GetPrivateProfileIntA(fileiobuf, "R_Linearity",  300, INI_FILENAME) - 300) / 100.0f;
 		set->stick_r.deadzone            = GetPrivateProfileIntA(fileiobuf, "R_Deadzone",     0, INI_FILENAME) / INI_FFACTOR;
 		set->stick_r.antideadzone        = GetPrivateProfileIntA(fileiobuf, "R_AntiDeadzone", 0, INI_FILENAME) / INI_FFACTOR;
@@ -184,18 +184,18 @@ void ini_save(void)
 		
 		wsprintfA(secbuf, "Rumble=%d", (int)(set->rumble_str * INI_FFACTOR)); secbuf = next_str(secbuf);
 
-		wsprintfA(secbuf, "LinearDZ=%d",             set->stick_l.deadzone_linear);             secbuf = next_str(secbuf);
-		wsprintfA(secbuf, "LinearADZ=%d",            set->stick_l.antideadzone_linear);         secbuf = next_str(secbuf);
-		wsprintfA(secbuf, "AxisInvertedLX=%d",       set->stick_l.inverted_x);                  secbuf = next_str(secbuf);
-		wsprintfA(secbuf, "AxisInvertedLY=%d",       set->stick_l.inverted_y);                  secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "L_LinearDZ=%d",           set->stick_l.deadzone_linear);             secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "L_LinearADZ=%d",          set->stick_l.antideadzone_linear);         secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "L_Inverted_X=%d",         set->stick_l.inverted_x);                  secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "L_Inverted_Y=%d",         set->stick_l.inverted_y);                  secbuf = next_str(secbuf);
 		wsprintfA(secbuf, "L_Linearity=%d",    (int)(set->stick_l.linearity * 100.0f) + 300);   secbuf = next_str(secbuf);
 		wsprintfA(secbuf, "L_Deadzone=%d",     (int)(set->stick_l.deadzone * INI_FFACTOR));     secbuf = next_str(secbuf);
 		wsprintfA(secbuf, "L_AntiDeadzone=%d", (int)(set->stick_l.antideadzone * INI_FFACTOR)); secbuf = next_str(secbuf);
 
-		//wsprintfA(secbuf, "LinearDZ=%d",             set->stick_r.deadzone_linear);             secbuf = next_str(secbuf);
-		//wsprintfA(secbuf, "LinearADZ=%d",            set->stick_r.antideadzone_linear);         secbuf = next_str(secbuf);
-		wsprintfA(secbuf, "AxisInvertedRX=%d",       set->stick_r.inverted_x);                  secbuf = next_str(secbuf);
-		wsprintfA(secbuf, "AxisInvertedRY=%d",       set->stick_r.inverted_y);                  secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "R_LinearDZ=%d",           set->stick_r.deadzone_linear);             secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "R_LinearADZ=%d",          set->stick_r.antideadzone_linear);         secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "R_Inverted_X=%d",         set->stick_r.inverted_x);                  secbuf = next_str(secbuf);
+		wsprintfA(secbuf, "R_Inverted_Y=%d",         set->stick_r.inverted_y);                  secbuf = next_str(secbuf);
 		wsprintfA(secbuf, "R_Linearity=%d",    (int)(set->stick_r.linearity * 100.0f) + 300);   secbuf = next_str(secbuf);
 		wsprintfA(secbuf, "R_Deadzone=%d",     (int)(set->stick_r.deadzone * INI_FFACTOR));     secbuf = next_str(secbuf);
 		wsprintfA(secbuf, "R_AntiDeadzone=%d", (int)(set->stick_r.antideadzone * INI_FFACTOR)); secbuf = next_str(secbuf);

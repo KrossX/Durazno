@@ -183,7 +183,7 @@ namespace DuraznoGUI
 
 			if (Version_Label != null) Version_Label.Content = "v0.6 ";
 
-			INIstuff = new INIsettings(this, 3); // Set INI version here
+			INIstuff = new INIsettings(this, 4); // Set INI version here
 			INIstuff.LoadSettings();
 			INIstuff.SaveSettings();
 
