@@ -95,8 +95,11 @@ namespace DuraznoGUI
 				set.invertedAxis[2] = ReadEntry("Controller" + port, "AxisInvertedRX") == 1;
 				set.invertedAxis[3] = ReadEntry("Controller" + port, "AxisInvertedRY") == 1;
 
-				set.triggerMin = ReadEntry("Controller" + port, "TriggerMin") & 0xFF;
-				set.triggerMax = ReadEntry("Controller" + port, "TriggerMax") & 0xFF;
+				set.triggerL.min = ReadEntry("Controller" + port, "L_TriggerMin") & 0xFF;
+				set.triggerL.max = ReadEntry("Controller" + port, "L_TriggerMax") & 0xFF;
+
+				set.triggerL.min = ReadEntry("Controller" + port, "R_TriggerMin") & 0xFF;
+				set.triggerL.max = ReadEntry("Controller" + port, "R_TriggerMax") & 0xFF;
 
 				set.rumble = ReadEntry("Controller" + port, "Rumble") / FACTOR;
 
@@ -155,8 +158,11 @@ namespace DuraznoGUI
 				SaveEntry("Controller" + port, "AxisInvertedRX", set.invertedAxis[2] ? 1 : 0);
 				SaveEntry("Controller" + port, "AxisInvertedRY", set.invertedAxis[3] ? 1 : 0);
 
-				SaveEntry("Controller" + port, "TriggerMin", set.triggerMin);
-				SaveEntry("Controller" + port, "TriggerMax", set.triggerMax);
+				SaveEntry("Controller" + port, "L_TriggerMin", set.triggerL.min);
+				SaveEntry("Controller" + port, "L_TriggerMax", set.triggerL.max);
+
+				SaveEntry("Controller" + port, "R_TriggerMin", set.triggerR.min);
+				SaveEntry("Controller" + port, "R_TriggerMax", set.triggerR.max);
 
 				SaveEntry("Controller" + port, "Rumble", (int)(set.rumble * FACTOR));
 

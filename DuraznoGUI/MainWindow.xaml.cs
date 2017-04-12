@@ -33,15 +33,21 @@ namespace DuraznoGUI
 		public double linearity, deadzone, antiDeadzone;
 	}
 
+	public struct TRIGGER
+	{
+		public int min, max;
+	}
+
 	public class SETTINGS
 	{
 		public int port;
 		public bool linearDZ, linearADZ, isDisabled, isDummy, perStick;
 		public bool[] invertedAxis;
-		public int triggerMin, triggerMax;
 		public double rumble;
 
 		public STICK stickL, stickR;
+		public TRIGGER triggerL, triggerR;
+
 		public int[] remap;
 
 		public SETTINGS()
@@ -64,8 +70,11 @@ namespace DuraznoGUI
 			stickR.antiDeadzone = 0.0;
 			stickR.linearity = 0.0;
 
-			triggerMin = 0;
-			triggerMax = 255;
+			triggerL.min = 0;
+			triggerL.max = 255;
+
+			triggerR.min = 0;
+			triggerR.max = 255;
 
 			invertedAxis = new bool[4];
 			remap = new int[24];
@@ -141,7 +150,7 @@ namespace DuraznoGUI
 
 	public partial class MainWindow : Window
 	{
-		[DllImport("xinput1_3.dll")]
+		[DllImport("xinput1_3.dll", CallingConvention = CallingConvention.Cdecl)]
 		private static extern void INI_ReloadSettings();
 
 		[DllImport("xinput1_3.dll", CallingConvention = CallingConvention.Winapi)]
