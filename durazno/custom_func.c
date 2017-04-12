@@ -12,7 +12,7 @@ DWORD cheap_find_last_of(char *string, char c)
 	for (char *strpos = string; *strpos; strpos++)
 	{
 		if (*strpos == c)
-			charpos = strpos - string;
+			charpos = (DWORD)(strpos - string);
 	}
 
 	return charpos;

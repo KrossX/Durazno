@@ -13,7 +13,7 @@ static
 void load_remap(char *secbuf, struct remap *remap)
 {
 	char *secdata = next_str(secbuf);
-	DWORD bufflen = secdata - fileiobuf;
+	DWORD bufflen = (DWORD)(secdata - fileiobuf);
 	DWORD length  = GetPrivateProfileStringA(secbuf, "Remap", "", secdata, bufflen, INI_FILENAME);
 	
 	if (length != 71)
