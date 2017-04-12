@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Durazno", "durazno\durazno.vcxproj", "{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "durazno", "durazno\durazno.vcxproj", "{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DuraznoGUI", "DuraznoGUI\DuraznoGUI.csproj", "{DA7F0C80-4B06-4B88-B387-2327D8E814D8}"
 EndProject
@@ -15,14 +15,14 @@ Global
 		Release|64bit = Release|64bit
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Debug|32bit.ActiveCfg = Debug|Win32
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Debug|32bit.Build.0 = Debug|Win32
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Debug|64bit.ActiveCfg = Debug|x64
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Debug|64bit.Build.0 = Debug|x64
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Release|32bit.ActiveCfg = Release|Win32
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Release|32bit.Build.0 = Release|Win32
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Release|64bit.ActiveCfg = Release|x64
-		{33ED588A-99A5-4AF3-8FA5-7626A39E94EB}.Release|64bit.Build.0 = Release|x64
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Debug|32bit.ActiveCfg = Debug|Win32
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Debug|32bit.Build.0 = Debug|Win32
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Debug|64bit.ActiveCfg = Debug|x64
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Debug|64bit.Build.0 = Debug|x64
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Release|32bit.ActiveCfg = Release|Win32
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Release|32bit.Build.0 = Release|Win32
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Release|64bit.ActiveCfg = Release|x64
+		{7D6E4595-1F59-4C4F-B196-1F8EAE564AD5}.Release|64bit.Build.0 = Release|x64
 		{DA7F0C80-4B06-4B88-B387-2327D8E814D8}.Debug|32bit.ActiveCfg = Debug|x86
 		{DA7F0C80-4B06-4B88-B387-2327D8E814D8}.Debug|32bit.Build.0 = Debug|x86
 		{DA7F0C80-4B06-4B88-B387-2327D8E814D8}.Debug|64bit.ActiveCfg = Debug|x64
