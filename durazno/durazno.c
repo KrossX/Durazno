@@ -291,5 +291,3 @@ DWORD WINAPI GetControllerInput(DWORD port)
 
 	return (DWORD)-1;
 }
-
-
