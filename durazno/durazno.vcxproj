@@ -117,7 +117,7 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>durazno.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>xinput1_4.def</ModuleDefinitionFile>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
@@ -144,7 +144,7 @@
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>durazno.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>xinput1_4.def</ModuleDefinitionFile>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
@@ -172,7 +172,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <SubSystem>Windows</SubSystem>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>durazno.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>xinput1_4.def</ModuleDefinitionFile>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -202,7 +202,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <SubSystem>Windows</SubSystem>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
-      <ModuleDefinitionFile>durazno.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>xinput1_4.def</ModuleDefinitionFile>
       <EntryPointSymbol>DllMain</EntryPointSymbol>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -231,9 +231,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="durazno.def" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="durazno.h" />

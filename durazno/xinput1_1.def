@@ -1,0 +1,15 @@
+LIBRARY
+
+EXPORTS
+		;DllMain                         @1
+		XInputEnable                    @2
+		XInputGetCapabilities           @3
+		XInputGetDSoundAudioDeviceGuids @4
+		XInputGetState                  @5
+		XInputSetState                  @6
+
+		; config tool stuff
+		GetControllerInput              @15
+		DuraznoGetState                 @16
+		DuraznoGetStateEx               @17
+		INI_ReloadSettings              @18

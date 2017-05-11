@@ -11,7 +11,7 @@
 #define _WIN32_IE      0x0400
 
 #include <windows.h>
-#include <xinput.h>
+#include "xinput.h"
 #pragma warning(pop)
 
 struct UNKNOWN;
