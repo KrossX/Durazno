@@ -133,7 +133,7 @@ void ini_load(void)
 		set->stick_l.antideadzone_linear = GetPrivateProfileIntA(fileiobuf, "L_LinearADZ",    0, INI_FILENAME) == 1;
 		set->stick_l.inverted_x          = GetPrivateProfileIntA(fileiobuf, "L_Inverted_X",   0, INI_FILENAME) == 1;
 		set->stick_l.inverted_y          = GetPrivateProfileIntA(fileiobuf, "L_Inverted_Y",   0, INI_FILENAME) == 1;
-		set->stick_l.linearity           =(GetPrivateProfileIntA(fileiobuf, "L_Linearity",  300, INI_FILENAME) - 300) / 100.0f;
+		set->stick_l.linearity           = GetPrivateProfileIntA(fileiobuf, "L_Linearity",  300, INI_FILENAME) / 100.0f - 3.0f;
 		set->stick_l.deadzone            = GetPrivateProfileIntA(fileiobuf, "L_Deadzone",     0, INI_FILENAME) / INI_FFACTOR;
 		set->stick_l.antideadzone        = GetPrivateProfileIntA(fileiobuf, "L_AntiDeadzone", 0, INI_FILENAME) / INI_FFACTOR;
 
@@ -141,7 +141,7 @@ void ini_load(void)
 		set->stick_r.antideadzone_linear = GetPrivateProfileIntA(fileiobuf, "R_LinearADZ",    0, INI_FILENAME) == 1;
 		set->stick_r.inverted_x          = GetPrivateProfileIntA(fileiobuf, "R_Inverted_X",   0, INI_FILENAME) == 1;
 		set->stick_r.inverted_y          = GetPrivateProfileIntA(fileiobuf, "R_Inverted_Y",   0, INI_FILENAME) == 1;
-		set->stick_r.linearity           =(GetPrivateProfileIntA(fileiobuf, "R_Linearity",  300, INI_FILENAME) - 300) / 100.0f;
+		set->stick_r.linearity           = GetPrivateProfileIntA(fileiobuf, "R_Linearity",  300, INI_FILENAME) / 100.0f - 3.0f;
 		set->stick_r.deadzone            = GetPrivateProfileIntA(fileiobuf, "R_Deadzone",     0, INI_FILENAME) / INI_FFACTOR;
 		set->stick_r.antideadzone        = GetPrivateProfileIntA(fileiobuf, "R_AntiDeadzone", 0, INI_FILENAME) / INI_FFACTOR;
 
