@@ -18,7 +18,9 @@ void load_remap(char *secbuf, struct remap *remap)
 	
 	if (length != 71)
 	{
-		for (int i = 0; i < 24; i++)
+		int i;
+		
+		for (i = 0; i < 24; i++)
 		{
 			remap[i].control = i;
 
@@ -29,7 +31,9 @@ void load_remap(char *secbuf, struct remap *remap)
 	}
 	else
 	{
-		for (int i = 0; i < 24; i++, secdata += 3)
+		int i;
+		
+		for (i = 0; i < 24; i++, secdata += 3)
 		{
 			int control = remap[i].control = cheap_atoi_n(secdata, 2);
 
@@ -58,10 +62,12 @@ void load_remap(char *secbuf, struct remap *remap)
 static
 void save_remap(char *secbuf, struct remap *remap)
 {
+	int i;
+	
 	wsprintfA(secbuf, "Remap=");
 	secbuf = next_str(secbuf) - 1;
-
-	for (int i = 0; i < 24; i++, secbuf += 3)
+	
+	for (i = 0; i < 24; i++, secbuf += 3)
 	{
 		wsprintfA(secbuf, "%02d ", remap[i].control);
 	}
@@ -109,6 +115,8 @@ void toggle_inverted(struct settings *set)
 static
 void ini_load(void)
 {
+	int port;
+	
 	if (GetPrivateProfileIntA("General", "INIVersion", 0, INI_FILENAME) != INI_VERSION)
 	{
 		// clear the file or something
@@ -117,7 +125,7 @@ void ini_load(void)
 
 	GetPrivateProfileStringA("General", "LoadDLL", "", custom_dll, MAX_PATH, INI_FILENAME);
 
-	for (int port = 0; port < 4; port++)
+	for (port = 0; port < 4; port++)
 	{
 		struct settings *set = &settings[port];
 		wsprintfA(fileiobuf, "Controller%d", port);
@@ -164,6 +172,7 @@ void ini_load(void)
 static
 void ini_save(void)
 {
+	int port;
 	char *secbuf = fileiobuf;
 
 	wsprintfA(secbuf, "INIversion=%d", INI_VERSION); secbuf = next_str(secbuf);
@@ -172,13 +181,15 @@ void ini_save(void)
 
 	WritePrivateProfileSectionA("General", fileiobuf, INI_FILENAME);
 
-	for (int port = 0; port < 4; port++)
+	for (port = 0; port < 4; port++)
 	{
 		struct settings *set = &settings[port];
+		char *section;
+		char *secdata;
 		
-		char *section = fileiobuf;
+		section = fileiobuf;
 		wsprintfA(section, "Controller%d", port); 
-		char *secdata = next_str(section);
+		secdata = next_str(section);
 		
 		secbuf = secdata;
 		wsprintfA(secbuf, "Port=%d",    set->index);    secbuf = next_str(secbuf);

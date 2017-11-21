@@ -27,15 +27,20 @@ static
 BOOL load_xinput_dll(HINSTANCE instance)
 {
 	char sysdir[MAX_PATH];
-	UINT sysdir_len = GetSystemDirectoryA(sysdir, MAX_PATH);
-	if (sysdir_len == 0 || sysdir_len >= MAX_PATH) return FALSE;
-
 	char modname[MAX_PATH];
-	DWORD modname_len = GetModuleFileNameA(instance, modname, MAX_PATH);
+	UINT sysdir_len;
+	DWORD modname_len;
+	DWORD namepos;
+	char *dllpath;
+	
+	sysdir_len = GetSystemDirectoryA(sysdir, MAX_PATH);
+	if (sysdir_len == 0 || sysdir_len >= MAX_PATH) return FALSE;
+	
+	modname_len = GetModuleFileNameA(instance, modname, MAX_PATH);
 	if (!modname_len) return FALSE;
 
-	DWORD namepos = cheap_find_last_of(modname, '\\');
-	char *dllpath = lstrcatA(sysdir, &modname[namepos]);
+	namepos = cheap_find_last_of(modname, '\\');
+	dllpath = lstrcatA(sysdir, &modname[namepos]);
 	if (!dllpath) return FALSE;
 
 	XInput.dll = LoadLibraryA(dllpath);
@@ -80,12 +85,14 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 
 DWORD WINAPI XInputGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
+	DWORD retval;
+	
 	struct settings *set = &settings[dwUserIndex];
 
 	if(set->disabled)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
-	DWORD retval = XInput.GetState(set->index, pState);
+	retval = XInput.GetState(set->index, pState);
 
 	if (retval == ERROR_SUCCESS)
 	{
@@ -169,12 +176,14 @@ DWORD WINAPI XInputGetAudioDeviceIds(DWORD dwUserIndex, LPWSTR pRenderDeviceId, 
 
 DWORD WINAPI XInputGetStateEx(DWORD dwUserIndex, XINPUT_STATE *pState)
 {
+	DWORD retval;
+	
 	struct settings *set = &settings[dwUserIndex];
 
 	if (set->disabled)
 		return ERROR_DEVICE_NOT_CONNECTED;
 
-	DWORD retval = XInput.GetStateEx(set->index, pState);
+	retval = XInput.GetStateEx(set->index, pState);
 
 	if (retval == ERROR_SUCCESS)
 	{
@@ -246,8 +255,9 @@ DWORD WINAPI DuraznoGetStateEx(DWORD dwUserIndex, XINPUT_STATE* pState)
 DWORD WINAPI GetControllerInput(DWORD port)
 {
 	XINPUT_STATE state;
+	int i;
 
-	for (int i = 0; i < 100; i++)
+	for (i = 0; i < 100; i++)
 	{
 		if (DuraznoGetState(port, &state) != ERROR_SUCCESS)
 			return (DWORD)-1;

@@ -8,8 +8,9 @@ static
 DWORD cheap_find_last_of(char *string, char c)
 {
 	DWORD charpos = 0;
+	char *strpos;
 
-	for (char *strpos = string; *strpos; strpos++)
+	for (strpos = string; *strpos; strpos++)
 	{
 		if (*strpos == c)
 			charpos = (DWORD)(strpos - string);
@@ -34,8 +35,9 @@ int cheap_atoi_n(char *str, int n)
 {
 	// no negative
 	int num = 0;
+	char *p;
 
-	for (char *p = str; *p && n; p++, n--)
+	for (p = str; *p && n; p++, n--)
 	{
 		if (*p >= '0' && *p <= '9')
 			num = num * 10 + (*p - '0');

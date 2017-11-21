@@ -1,7 +1,7 @@
 #NMAKE
 
-CC_FLAGS = /c /O2 /GL /D _USING_V110_SDK71_ /D _WINDLL /D _MBCS /MD /GS- /nologo
-LINKER_FLAGS = /NODEFAULTLIB /MANIFEST:NO /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /ENTRY:"DllMain" /DYNAMICBASE:NO /NXCOMPAT /SAFESEH:NO /DLL /NOLOGO
+CC_FLAGS = /c /O1 /Oi /fp:fast /GS- /GR- /MT /nologo /Wall
+LINKER_FLAGS = /DLL /SUBSYSTEM:WINDOWS /MANIFEST:NO /NOLOGO
 
 SOURCE = durazno\durazno.c
 
@@ -14,7 +14,7 @@ all: $(TARGETS)
 	@del build\*.lib
 
 durazno.obj:
-	@cl $(CC_FLAGS) $(SOURCE) -Fo:durazno.obj
+	@cl $(CC_FLAGS) $(SOURCE) /Fodurazno.obj
 	
 $(TARGETS): durazno.obj
 	@link durazno.obj kernel32.lib user32.lib $(LINKER_FLAGS) /DEF:durazno\$(@).def /OUT:build\$(@).dll
