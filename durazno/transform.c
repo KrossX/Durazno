@@ -45,10 +45,12 @@ float antideadzone(float value, float antideadzone, float k)
 static
 void transform_analog(struct stick_settings *set, SHORT *X, SHORT *Y)
 {
-	if (*X == 0 || *Y == 0) return;
+	float x, y;
 	
-	float x = *X;
-	float y = *Y;
+	if (*X == 0 && *Y == 0) return;
+	
+	x = (float)*X;
+	y = (float)*Y;
 
 	if (set->linearity != 0)
 	{
