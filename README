@@ -29,14 +29,14 @@ create one on first run. To change the INI with the GUI, just load the GUI
 from that same location. Or just edit it manually.
 
 You might need to rename the DLL depending on the game. The following list
-might help: http://code.google.com/p/x360ce/wiki/GameCompatibilityList 
+might help: https://github.com/x360ce/x360ce/blob/master/Wiki/CompatibilityList.md
 
 -------------------------------------------------------------------------------
 Thanks / Contact
 -------------------------------------------------------------------------------
 
 Thanks goes to x360ce as its pass through mode inspired this tool
-http://code.google.com/p/x360ce/
+https://github.com/x360ce/x360ce
 
 Also to Strike105X for his dilemma with the lack of game settings started this
 and his help with the GUI.
