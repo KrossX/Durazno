@@ -111,8 +111,8 @@ namespace DuraznoGUI
 
 				set.triggerL.min = ReadEntry("Controller" + port, "L_TriggerMin") & 0xFF;
 				set.triggerL.max = ReadEntry("Controller" + port, "L_TriggerMax") & 0xFF;
-				set.triggerL.min = ReadEntry("Controller" + port, "R_TriggerMin") & 0xFF;
-				set.triggerL.max = ReadEntry("Controller" + port, "R_TriggerMax") & 0xFF;
+				set.triggerR.min = ReadEntry("Controller" + port, "R_TriggerMin") & 0xFF;
+				set.triggerR.max = ReadEntry("Controller" + port, "R_TriggerMax") & 0xFF;
 
 				set.stickL.linearity    = l_linearity < 0 ? 0 : (l_linearity - 300) / 100.0;
 				set.stickL.deadzone     = l_deadzone / FACTOR;
